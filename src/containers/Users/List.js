@@ -2,6 +2,7 @@ import {inject, observer} from 'mobx-react';
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {Input} from "reactstrap";
+import Avatar from "components/Common/Avatar";
 
 @inject('AuthStore', 'UserStore')
 @observer
@@ -94,22 +95,20 @@ class List extends Component {
       return <div className="col-sm-4" key={item.uid}>
         <div className="card mb-2">
           <div className="card-body p-2">
-            {item.photoURL &&
-            <img className="img-thumbnail rounded-circle float-left mr-2"
-                 src={item.photoURL} alt={item.displayName}
-                 width="100"
-            />}
+            <Avatar className="img-thumbnail rounded-circle float-left mr-2"
+                    src={item.avatar} alt={item.name}
+                    width="100" height="100"/>
             <div className="">
               <h3 className="h5 card-title">
-                <i className={item.icon}/>&nbsp;&nbsp;{item.displayName}{item.email}</h3>
+                <i className={item.icon}/>&nbsp;&nbsp;{item.name}{item.email}</h3>
               <p>
                 <small>{item.first}</small>
               </p>
               <div className="text-right">
                 {item.uid &&
-                <Link to={'/users/' + item.uid} className="btn btn-sm btn-primary">PROFILE</Link>}
+                <Link to={'/' + (item.username || item.uid)} className="btn btn-sm btn-primary">PROFILE</Link>}
                 {(isAdmin || isEditor) &&
-                <Link to={'/users/edit/' + item.uid} className="btn btn-sm btn-success ml-1">EDIT</Link>}
+                <Link to={'/users/' + item.uid + '/edit'} className="btn btn-sm btn-success ml-1">EDIT</Link>}
               </div>
             </div>
           </div>

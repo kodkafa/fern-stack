@@ -11,11 +11,11 @@ import StorImage from 'components/Common/StorImage'
 @observer
 class Navbar extends Component {
 
-  @computed get authenticated(){
+  @computed get authenticated() {
     return this.props.AuthStore.authenticated
   }
 
-  @computed get me(){
+  @computed get me() {
     return this.props.AuthStore.me
   }
 
@@ -64,7 +64,7 @@ class Navbar extends Component {
         <li className="nav-item">
           <Link className="nav-link" to="/works">Works</Link>
         </li>}
-        {me.isManager() &&
+        {(me.isManager() || me.isAdmin()) &&
         <li className="nav-item">
           <Link className="nav-link" to="/users">Users</Link>
         </li>}

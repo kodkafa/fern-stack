@@ -2,6 +2,7 @@ import {inject, observer} from 'mobx-react';
 import {autorun} from 'mobx';
 import React, {Component} from 'react';
 import StorImage from 'components/Common/StorImage'
+import Avatar from 'components/Common/Avatar'
 
 @inject('AuthStore', 'UserStore')
 @observer
@@ -9,7 +10,7 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     autorun(() => {
-      this.props.UserStore.getUserByUsername(props.match.params.username || props.AuthStore.me.uid);
+      this.props.UserStore.getUserByUsername(props.match.params.username);
     })
   }
 
@@ -24,43 +25,49 @@ class Profile extends Component {
         <p>{JSON.stringify(process.env)}</p></div>
     </section>;
 
-    const isMe = this.props.AuthStore.me.uid === user.uid;
-    console.log(isMe, this.props.AuthStore.me.uid,user.uid)
-    return <section className="container">
+    return <section className="container py-5">
       <div className="profile">
-        <div className="fb-profile">
-          {isMe && <button>Edit</button>}
-          <StorImage align="left" className="fb-image-lg img-fluid"
+        <figure id="cover-figure" className="cover">
+          <StorImage className="img-fluid"
                      width={1200}
                      height={300}
                      src={user.cover}
-                     alt={user.fullname}/>
-          <StorImage align="left" className="fb-image-profile img-thumbnail"
-                     width={120}
-                     height={120}
-                     src={user.avatar}
-                     alt={user.fullname}/>
-          <div className="fb-profile-text">
-
-            <p>{user.bio && user.bio}</p>
+                     alt={user.name}/>
+          <figure className="avatar">
+            <Avatar className="img-thumbnail"
+                       width={120}
+                       height={120}
+                       src={user.avatar}
+                       alt={user.name}/>
+          </figure>
+          <div className="info">
+            <h1 className="h2">{user.name}</h1>
+            <h2 className="h6">{user.username}</h2>
           </div>
+        </figure>
+        <div className="profile-nav">
+          <nav className="navbar navbar-expand-lg navbar-light bg-light">
+            <ul className="navbar-nav">
+              <li className="nav-item active">
+                <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
+              </li>
+              {/*<li className="nav-item">*/}
+              {/*  <a className="nav-link" href="#">Features</a>*/}
+              {/*</li>*/}
+              {/*<li className="nav-item">*/}
+              {/*  <a className="nav-link" href="#">Pricing</a>*/}
+              {/*</li>*/}
+              {/*<li className="nav-item">*/}
+              {/*  <a className="nav-link disabled" href="#" tabIndex="-1" aria-disabled="true">Disabled</a>*/}
+              {/*</li>*/}
+            </ul>
+          </nav>
         </div>
+        <p>{user.bio && user.bio}</p>
       </div>
     </section>
 
   }
 }
 
-// const mapStateToProps = (state) => {
-//     return {me: state.auth.me, user: state.system.data}
-// };
-//
-// const mapDispatchToProps = (dispatch) => {
-//     return {
-//         getProfile: (values) => {
-//             dispatch(getProfile(values));
-//         },
-//     }
-// };
-
-export default Profile//connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default Profile

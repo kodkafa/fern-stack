@@ -83,7 +83,7 @@ class StorImage extends React.Component {
         this.state.url
           ? <img {...this.props} src={this.state.url}/>
           : (this.props.width || this.props.height ?
-          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+          <svg {...this.props} version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
                viewBox={`0 0 ${this.props.width} ${this.props.height}`}>
             <defs>
               <linearGradient id="flow" x1="100%" y1="100%" x2="100%" y2="100%">

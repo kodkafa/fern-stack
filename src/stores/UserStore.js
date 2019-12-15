@@ -77,7 +77,10 @@ export default class UserStore {
       this.data = new UserModel(user);
       console.log('getUserById data', this.data);
       this.status = 'ready';
+
       console.log('user store data', this.data);
+      this.handleAdd(user)
+
       //return this.data;
     } catch (error) {
       this.status = "error";
@@ -121,7 +124,12 @@ export default class UserStore {
   updateUserById = async ({id, first, last, born, bio}) => {
     console.log('updateUserById', {id, first, last, born, bio});
     try {
-      const user = new UserModel(await this.service.get(id));
+      const user = this.list.get(id);
+      user.first =  first;
+      user.last =  last;
+      user.born =  born;
+      user.bio =  bio;
+      user.save();
       console.log('updateUserById data', user);
       this.status = 'ready';
       console.log('user store data', this.data);

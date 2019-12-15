@@ -2,6 +2,7 @@ import React, {PureComponent} from 'react';
 import {Link, Route} from 'react-router-dom';
 import Account from './Account'
 import ChangePassword from './ChangePassword'
+import Username from './Username'
 import Images from './Images'
 
 const routes = [
@@ -14,15 +15,15 @@ const routes = [
     name: 'Account Info',
     main: Account
   },
-  {
-    path: '/settings/images',
-    link: '/settings/images',
-    icon: 'fa fa-image',
-    exact: true,
-    title: () => <h1 className="h5">Change Images</h1>,
-    name: 'Change Images',
-    main: Images
-  },
+  // {
+  //   path: '/settings/images',
+  //   link: '/settings/images',
+  //   icon: 'fa fa-image',
+  //   exact: true,
+  //   title: () => <h1 className="h5">Change Images</h1>,
+  //   name: 'Change Images',
+  //   main: Images
+  // },
   {
     path: '/settings/set-username',
     link: '/settings/set-username',
@@ -30,7 +31,7 @@ const routes = [
     exact: true,
     title: () => <h1 className="h5">Set Username</h1>,
     name: 'Set Username',
-    main: ChangePassword
+    main: Username
   },
   {
     path: '/settings/change-password',

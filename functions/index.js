@@ -2,11 +2,14 @@ const express = require('express');
 const cors = require('cors');//({origin: true});
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-console.log('initializeApp', functions.config(), functions.config().firebase);
-admin.initializeApp(functions.config().firebase);
+//console.log('initializeApp', functions.config(), functions.config().firebase);
+//admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
+
+const db = admin.firestore();
 
 const authorization = async (req, res, next) => {
   const token = req.get('authorization').replace('Bearer ', '');
@@ -112,24 +115,24 @@ users.get('/:id', isEditor, async (req, res) => {
     return res.status(500).end(JSON.stringify(error.errorInfo));
   }
 });
-users.put('/:id/toggleAdmin', isAdmin, (req, res) => {
-  try {
-    const user = admin.auth().getUserByEmail(email).end();
-    console.log('getUserByEmail', {user});
-    if (user) {
-      admin.auth().setCustomUserClaims(user.uid, {
-        admin: true
-      }).end();
-      const metadataRef = admin.database().ref("metadata/" + user.uid);
-      metadataRef.set({refreshTime: new Date().getTime()});
-      return res.status(200).end(JSON.stringify(user));
-    } else
-      return res.status(404).end(JSON.stringify({code: 'user-not-found', message: "User not found!"}));
-  } catch (error) {
-    console.log('Error', error.errorInfo);
-    return res.status(500).end(JSON.stringify(error.errorInfo));
-  }
-});
+// users.put('/:id/toggleAdmin', isAdmin, (req, res) => {
+//   try {
+//     const user = admin.auth().getUserByEmail(email).end();
+//     console.log('getUserByEmail', {user});
+//     if (user) {
+//       admin.auth().setCustomUserClaims(user.uid, {
+//         admin: true
+//       }).end();
+//       const metadataRef = admin.database().ref("metadata/" + user.uid);
+//       metadataRef.set({refreshTime: new Date().getTime()});
+//       return res.status(200).end(JSON.stringify(user));
+//     } else
+//       return res.status(404).end(JSON.stringify({code: 'user-not-found', message: "User not found!"}));
+//   } catch (error) {
+//     console.log('Error', error.errorInfo);
+//     return res.status(500).end(JSON.stringify(error.errorInfo));
+//   }
+// });
 users.delete('/:id/delete', isAdmin, (req, res) => {
   try {
     const user = admin.auth().getUserByEmail(email).end();
@@ -141,6 +144,38 @@ users.delete('/:id/delete', isAdmin, (req, res) => {
       return res.status(404).end(JSON.stringify({code: 'user-not-found', message: "User not found!"}));
   } catch (error) {
     console.log('Error', error.errorInfo);
+    return res.status(500).end(JSON.stringify(error.errorInfo));
+  }
+});
+users.put('/:id/toggleAdmin', isAdmin, async (req, res) => {
+  try {
+    const user = await admin.auth().getUser(req.params.id)
+      .then(user => user.toJSON())
+      .catch(error => {
+        console.log('User Not Found', error);
+        return res.status(404).end(JSON.stringify({code: 'not_found', message: 'User not found!'}));
+      });
+    if (user) {
+      await admin.auth().setCustomUserClaims(user.uid, {
+        admin: req.body.admin// ? req.body.admin : admin.firestore.FieldValue.delete()
+      }).then();
+      const metadataRef = await admin.database().ref("metadata/" + user.uid);
+      metadataRef.set({refreshTime: new Date().getTime()});
+      console.log('user.customClaims', typeof user.customClaims);
+      if (!req.body.admin)
+        delete user.customClaims.admin;
+      else if (user.hasOwnProperty('customClaims') && user.customClaims)
+        user.customClaims.admin = true;
+      else
+        user.customClaims = {admin: true};
+      db.collection("users").doc(user.uid)
+        .update({customClaims: user.customClaims});
+
+      return res.status(200).end(JSON.stringify(user));
+    } else
+      return res.status(404).end(JSON.stringify({code: 'user-not-found', message: "User not found!"}));
+  } catch (error) {
+    console.log('Error', error);
     return res.status(500).end(JSON.stringify(error.errorInfo));
   }
 });
@@ -217,19 +252,19 @@ exports.users = functions.https.onRequest(users);
 //       });
 //   })
 // });
+
+
+// admin.auth().verifyIdToken(idToken).then((claims) => {
+//   if (claims.admin === true) {
+//     // Allow access to requested admin resource.
+//   }
+// });
 //
-//
-// // admin.auth().verifyIdToken(idToken).then((claims) => {
-// //   if (claims.admin === true) {
-// //     // Allow access to requested admin resource.
-// //   }
-// // });
-// //
-// // // Lookup the user associated with the specified uid.
-// // admin.auth().getUser(uid).then((userRecord) => {
-// //   // The claims can be accessed on the user record.
-// //   console.log(userRecord.customClaims.admin);
-// // });
+// // Lookup the user associated with the specified uid.
+// admin.auth().getUser(uid).then((userRecord) => {
+//   // The claims can be accessed on the user record.
+//   console.log(userRecord.customClaims.admin);
+// });
 //
 //
 // exports.getUser = functions.https.onRequest(async (req, res) => {

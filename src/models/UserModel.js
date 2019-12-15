@@ -11,6 +11,7 @@ export class UserModel {
   @observable cover;
   @observable avatar;
   @observable _born;
+  @observable customClaims;
 
   constructor(data) {
     console.log('user model constructor', data);
@@ -37,21 +38,24 @@ export class UserModel {
   }
 
   isAdmin = () => {
-    return 'admin' in this.customClaims ? this.customClaims.accessLevel : false;
+    return 'admin' in this.customClaims && this.customClaims.admin
   };
 
   isEditor = () => {
-    return 'editor' in this.customClaims ? this.customClaims.accessLevel : false;
+    return 'editor' in this.customClaims && this.customClaims.editor
   };
 
   isManager = () => {
-    return 'manager' in this.customClaims ? this.customClaims.accessLevel : false;
+    return 'manager' in this.customClaims && this.customClaims.manager
   };
 
   isWorker = () => {
-    return 'worker' in this.customClaims ? this.customClaims.accessLevel : false;
+    return 'worker' in this.customClaims && this.customClaims.worker
   };
 
+  get id() {
+    return this.uid
+  }
 
   get name() {
     return this.first + ' ' + this.last
@@ -81,22 +85,55 @@ export class UserModel {
     } catch (error) {
       stores.SystemMessageStore.handleError(error)
     }
+  };
+
+  changeUsername = async (username) => {
+    try {
+      const {uid} = stores.AuthStore.me;
+
+      console.log({username})
+
+      const isOK = await firebase.firestore()
+        .collection('usernames')
+        .doc(username)
+        .set({uid})
+        .then(r => true)
+        .catch(error => stores.SystemMessageStore.handleError({
+          code: "CLAIMED_USERNAME",
+          message: "The username has already been claimed. Please, select a different one."
+        }));
+
+      console.log({isOK});
+
+      if (isOK) {
+
+        await firebase.firestore()
+          .collection('users')
+          .doc(uid)
+          .update({username})
+          .then()
+          .catch(error => stores.SystemMessageStore.handleError(error));
+
+        await firebase.firestore()
+          .collection('usernames')
+          .doc(this.username)
+          .delete()
+          .then(r => null).catch(e => null);
+        //await this.service.put(uid, {first, last, born, bio});
+        if (uid === stores.AuthStore.me.uid)
+          await stores.AuthStore.getUserData({uid});
+      }
+    } catch (error) {
+      stores.SystemMessageStore.handleError(error)
+    }
+  };
+
+  toggleAdmin = async () => {
+    try {
+      await stores.UserStore.service.toggleAdmin(this.uid, {admin: !this.isAdmin()})
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  // get name() {
-  //   return this.first + ' ' + this.last
-  // }
-
-  //
-  // toJS() {
-  //   return {
-  //     uid: this.uid,
-  //     phoneNumber: this.phoneNumber,
-  //     email: this.email
-  //   };
-  // }
-  //
-  // static fromJS(store, object) {
-  //   return new UserModel(store, object);
-  // }
 }

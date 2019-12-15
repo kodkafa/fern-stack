@@ -3,6 +3,8 @@ import {APIURL} from "../firebase/initialize";
 
 class UserService {
 
+
+
   getToken = async () => {
     try {
       return await firebase
@@ -30,9 +32,9 @@ class UserService {
       mode: 'cors',
       //body: JSON.stringify(data)
     };
-    const url = APIURL + (id ? "/users/"+id : "/users/?" + params);
+    const url = APIURL + (id ? "/users/" + id : "/users/?" + params);
     const response = await fetch(url, options);
-    console.log('UserService  GET',{response});
+    console.log('UserService  GET', {response});
     const result = await response.json();
     if (response.status === 200) {
       return result;
@@ -73,6 +75,18 @@ class UserService {
       headers
     };
     const request = new Request(APIURL + "/" + id, options);
+    return await fetch(request);
+  };
+
+  toggleAdmin = async (id, model) => {
+    const token = await this.getToken();
+    const options = {
+      method: "PUT",
+      mode: 'cors',
+      headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+      body: JSON.stringify(model)
+    };
+    const request = new Request(APIURL + "/users/" + id + "/toggleAdmin", options);
     return await fetch(request);
   };
 }
