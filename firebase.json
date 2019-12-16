@@ -33,6 +33,9 @@
     "database": {
       "port": 9001
     },
+    "firestore": {
+      "port": 8081
+    },
     "functions": {
       "port": 5001
     },
