@@ -1,0 +1,23 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        {
+          "fieldPath": "username",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "first",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "last",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

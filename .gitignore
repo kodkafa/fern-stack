@@ -72,3 +72,4 @@ firebase-config.json
 .idea/
 src/firebase/config.js
 /.runtimeconfig.json
+.firebaserc
