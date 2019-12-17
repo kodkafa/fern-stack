@@ -5,7 +5,7 @@ import SystemMessages from './SystemMessages';
 import logo from '../../styles/img/logo.svg';
 import {inject, observer} from "mobx-react";
 import {computed} from "mobx";
-import StorImage from 'components/Common/StorImage'
+import ImageViewer from 'components/Common/ImageViewer'
 
 @inject('AuthStore')
 @observer
@@ -82,7 +82,7 @@ class Navbar extends Component {
       return [
         <li className="nav-item dropdown" key="userMenu" onClick={Navbar.dropDownToggle}>
           <span className="nav-link dropdown-toggle" data-toggle="dropdown">
-            <StorImage className="navbar-avatar"
+            <ImageViewer className="navbar-avatar"
                        src={me.avatar} alt={me.name}/>
             <i className={me.icon}/> <strong>{me.first}</strong>
           </span>

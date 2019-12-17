@@ -2,7 +2,7 @@ import {inject, observer} from 'mobx-react';
 import {autorun} from 'mobx';
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import StorImage from 'components/Common/StorImage'
+import ImageViewer from 'components/Common/ImageViewer'
 import {Button, Modal, ModalBody, ModalFooter} from "reactstrap";
 import AvatarEditor from "react-avatar-editor";
 
@@ -126,7 +126,7 @@ class Profile extends Component {
                     onClick={!this.state.cover ? Profile.handleBrowseFile : () => null}>Change Cover
             </button>
           </div>
-          <StorImage className="img-fluid"
+          <ImageViewer className="img-fluid"
                      width={this.state.width}
                      height={this.state.height}
                      src={user.cover}
@@ -150,7 +150,7 @@ class Profile extends Component {
             </div>
           }
           <figure className={this.state.isUploadingProfile ? 'avatar uploading' : 'avatar'}>
-            <StorImage className="img-thumbnail"
+            <ImageViewer className="img-thumbnail"
                        width={120}
                        height={120}
                        src={user.avatar}

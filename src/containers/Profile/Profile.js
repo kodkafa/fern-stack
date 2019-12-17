@@ -1,7 +1,7 @@
 import {inject, observer} from 'mobx-react';
 import {autorun} from 'mobx';
 import React, {Component} from 'react';
-import StorImage from 'components/Common/StorImage'
+import ImageViewer from 'components/Common/ImageViewer'
 import Avatar from 'components/Common/Avatar'
 
 @inject('AuthStore', 'UserStore')
@@ -28,7 +28,7 @@ class Profile extends Component {
     return <section className="container py-5">
       <div className="profile">
         <figure id="cover-figure" className="cover">
-          <StorImage className="img-fluid"
+          <ImageViewer className="img-fluid"
                      width={1200}
                      height={300}
                      src={user.cover}

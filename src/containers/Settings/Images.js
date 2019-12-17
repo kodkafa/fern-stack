@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {inject, observer} from "mobx-react";
 import {Button, Modal, ModalBody, ModalFooter} from 'reactstrap';
 import AvatarEditor from 'react-avatar-editor'
-import StoreImage from 'components/Common/StorImage'
+import StoreImage from 'components/Common/ImageViewer'
 
 @inject('AuthStore', 'UserStore')
 @observer

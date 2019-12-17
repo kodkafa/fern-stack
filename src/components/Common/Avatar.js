@@ -1,5 +1,5 @@
 import React from 'react';
-import StorImage from './StorImage'
+import ImageViewer from './ImageViewer'
 import avatar from "styles/img/avatar.svg"
 
 class Avatar extends React.Component {
@@ -11,7 +11,7 @@ class Avatar extends React.Component {
   render() {
     console.log('this.checkSrc(this.props.src)', this.checkSrc(this.props.src), this.props.src)
     const src = this.checkSrc(this.props.src) ? avatar : null;
-    return <StorImage {...this.props} default={src}/>
+    return <ImageViewer {...this.props} placeholder={src}/>
   }
 }
 
