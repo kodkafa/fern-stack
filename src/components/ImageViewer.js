@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import firebase from "firebase/app";
 
-const ImageViewer = (props) => {
-  console.log("PROPS", props)
+export const ImageViewer = (props) => {
   const [src, setSrc] = useState(null);
   const placeholder = props.placeholder === undefined ? `http://holder.ninja/${props.width || 100}x${props.height || 100}.svg` :
     props.placeholder;
@@ -12,17 +11,17 @@ const ImageViewer = (props) => {
 
   useEffect(() => {
     if (isACorrectSrc(props.src)) {
-        firebase.storage().ref('images')
-          .child(props.src).getDownloadURL()
-          .then(
-            url => {
-              const image = new Image();
-              image.onload = () => {
-                setSrc(url)
-              };
-              image.src = url;
-            }
-          );
+      firebase.storage().ref('images')
+        .child(props.src).getDownloadURL()
+        .then(
+          url => {
+            const image = new Image();
+            image.onload = () => {
+              setSrc(url)
+            };
+            image.src = url;
+          }
+        );
     }
   });
 
@@ -53,5 +52,3 @@ const ImageViewer = (props) => {
       : null);
 
 };
-
-export default ImageViewer

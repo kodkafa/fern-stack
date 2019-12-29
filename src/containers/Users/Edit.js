@@ -1,8 +1,8 @@
 import {inject, observer} from "mobx-react";
 import React, {Component} from 'react';
 import {Field, Form, Formik} from 'formik'
-import * as Yup from 'yup'
-import ToggleButton from "components/Common/ToggleButton";
+import * as Yup from 'yup';
+import {ToggleButton} from 'components';
 
 const FormikForm = ({
                       values,

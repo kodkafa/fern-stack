@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
 
   function isAuthenticated () {
-    return request.auth.uid != null; 
+    return request.auth.uid != null;
   }
 
   function isOwnsResource (userId) {
@@ -12,12 +12,12 @@ service cloud.firestore {
   function isValidUsername(username){
   	return username.matches('^([a-z0-9_.]){5,22}$');
 	}
-  
+
   function isUsernameAvailable(username) {
     return isValidUsername(username) && resource == null;
       	//|| get(/databases/$(database)/documents/usernames/$(username)).data.uid == request.auth.uid);
   }
-  
+
   function isOwnsUsername(username) {
     return resource != null && resource.data.uid == request.auth.uid;
   }
@@ -25,37 +25,37 @@ service cloud.firestore {
  	function isAdmin() {
     return request.auth.token.admin == true;
   }
-  
+
  	function isEditor() {
     return request.auth.token.admin == true || request.auth.token.editor == true;
   }
-  
+
  	function isManager() {
     return request.auth.token.admin == true || request.auth.token.editor == true || request.auth.token.manager == true;
   }
-  
- 	function isWorker() {  
+
+ 	function isWorker() {
   	return request.auth.token.admin == true || request.auth.token.editor == true || request.auth.token.manager == true || request.auth.token.worker == true;
   }
 
   function doesntModifyUsername () {
     return request.resource.data.keys().hasAny(['username']) == false;
   }
-  
+
   match /databases/{database}/documents {
-  
+
   	match /users/{userId} {
       //allow read;
       allow create: if isAuthenticated() && isOwnsResource(userId);
       allow get: if isAuthenticated() && isOwnsResource(userId);
       allow update: if isAuthenticated() && (isOwnsResource(userId) || isAdmin())
-      //                  userOwnsResource(user) && doesntModifyUsername(); 
+      //                  userOwnsResource(user) && doesntModifyUsername();
     }
-    
+
   	match /users/{document=**} {
   		allow read: if isAdmin();
   	}
-    
+
     match /usernames/{username} {
       allow create: if isUsernameAvailable(username) && isAuthenticated();
       allow update: if isUsernameAvailable(username) && isOwnsUsername(username);

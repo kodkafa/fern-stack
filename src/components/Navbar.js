@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {HashLink} from 'react-router-hash-link';
 import SystemMessages from './SystemMessages';
-import logo from '../../styles/img/logo.svg';
+import logo from '../styles/img/logo.svg';
 import {inject, observer} from "mobx-react";
 import {computed} from "mobx";
-import ImageViewer from 'components/Common/ImageViewer'
+import {ImageViewer} from './ImageViewer'
 
 @inject('AuthStore')
 @observer
@@ -83,7 +83,7 @@ class Navbar extends Component {
         <li className="nav-item dropdown" key="userMenu" onClick={Navbar.dropDownToggle}>
           <span className="nav-link dropdown-toggle" data-toggle="dropdown">
             <ImageViewer className="navbar-avatar"
-                       src={me.avatar} alt={me.name}/>
+                         src={me.avatar} alt={me.name}/>
             <i className={me.icon}/> <strong>{me.first}</strong>
           </span>
           <div className="dropdown-menu">

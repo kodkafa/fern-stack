@@ -1,8 +1,7 @@
 import {inject, observer} from 'mobx-react';
 import {autorun} from 'mobx';
 import React, {Component} from 'react';
-import ImageViewer from 'components/Common/ImageViewer'
-import Avatar from 'components/Common/Avatar'
+import {Avatar, ImageViewer} from 'components'
 
 @inject('AuthStore', 'UserStore')
 @observer
@@ -10,19 +9,17 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     autorun(() => {
-      this.props.UserStore.getUserByUsername(props.match.params.username);
+      props.UserStore.getUserByUsername(props.match.params.username);
     })
   }
 
   render() {
     const user = this.props.UserStore.data;
-    console.log({user});
     if (user === null) return <section className="container">
       <div className="profile">Loading...</div>
     </section>;
     if (!user) return <section className="container">
-      <div className="profile"><h3>User not found!</h3>
-        <p>{JSON.stringify(process.env)}</p></div>
+      <div className="profile"><h3>User not found!</h3></div>
     </section>;
 
     return <section className="container py-5">

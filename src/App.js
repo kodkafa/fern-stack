@@ -4,7 +4,7 @@ import {Provider} from 'mobx-react';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Routes from './routes';
 import {stores} from './stores';
-import ScrollToTop from "components/Common/ScrollToTop";
+import {ScrollToTop} from "components";
 
 const App = () =>
   <Provider {...stores}>

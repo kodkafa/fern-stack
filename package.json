@@ -16,6 +16,7 @@
     "mobx": "^5.15.0",
     "mobx-react": "^6.1.4",
     "moment": "^2.24.0",
+    "moment-timezone": "^0.5.27",
     "node-sass": "^4.13.0",
     "nprogress": "^0.2.0",
     "prop-types": "^15.7.2",
@@ -41,7 +42,7 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
-    "functions:start": "export GOOGLE_APPLICATION_CREDENTIALS=../firebase-config.json && firebase emulators:start"
+    "functions:start": "export GOOGLE_APPLICATION_CREDENTIALS=../firebase-config.json && firebase emulators:start  --only functions"
   },
   "eslintConfig": {
     "extends": "react-app"

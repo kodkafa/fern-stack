@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {inject, observer} from 'mobx-react';
 import {Redirect, Route, Switch} from 'react-router-dom';
-import Loader from '../components/Common/Loader';
+import {Loader} from '../components/Loader';
 import Layout from '../containers/Layout';
 import SignUp from '../containers/Auth/SignUp';
 import SignIn from '../containers/Auth/SignIn';
@@ -45,12 +45,12 @@ class Routes extends Component {
     // //   this.props.UIStore.updateWindowWidth(window.innerWidth)
     // // })
     //
-    console.log(authenticated, this.props.location.pathname);
+    console.log('pathname', this.props.location);
     if (authenticated === null)
       handleAuth();
     else {
-      console.log('location', this.props.location.pathname);
-      localStorage.setItem('location', this.props.location.pathname);
+      console.log('location', this.props.location.pathname + this.props.location.search + this.props.location.hash);
+      localStorage.setItem('location', this.props.location.pathname + this.props.location.search + this.props.location.hash);
     }
   }
 
@@ -58,7 +58,7 @@ class Routes extends Component {
     //console.log('store', this.props.AuthStore, this.props);
     const {authenticated} = this.props.AuthStore;
     if (!['/signin', '/signup'].includes(this.props.location.pathname)) {
-      localStorage.setItem('location', this.props.location.pathname+this.props.location.hash);
+      localStorage.setItem('location', this.props.location.pathname + this.props.location.search + this.props.location.hash);
     }
     return (
       (authenticated === undefined) ? <Loader/>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-class ToggleButton extends React.Component {
+export class ToggleButton extends React.Component {
 
     constructor(props) {
         super(props);
@@ -54,11 +54,4 @@ class ToggleButton extends React.Component {
         );
     }
 }
-
-
-export default React.forwardRef((props, ref) =>
-    (
-        <ToggleButton {...props} forwardref={ref}/>
-    )
-)
 

@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import {Pagination, PaginationItem} from 'reactstrap';
 
-class CustomPagination extends React.Component {
+export class CustomPagination extends React.Component {
 
   constructor(props) {
     super(props);
@@ -80,11 +80,4 @@ class CustomPagination extends React.Component {
     );
   }
 }
-
-
-export default React.forwardRef((props, ref) =>
-  (
-    <CustomPagination {...props} forwardref={ref}/>
-  )
-)
 

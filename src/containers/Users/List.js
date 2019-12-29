@@ -2,7 +2,7 @@ import {inject, observer} from 'mobx-react';
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {Input} from "reactstrap";
-import Avatar from "components/Common/Avatar";
+import {Avatar} from 'components';
 
 @inject('AuthStore', 'UserStore')
 @observer

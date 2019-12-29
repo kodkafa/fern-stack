@@ -102,7 +102,10 @@ export default class UserStore {
           .then(doc => doc.exists && doc.data().uid)
           .catch(error => this.stores.SystemMessageStore.handleError(error))
         : username;
-
+      if (!uid) {
+        this.data = false;
+        return;
+      }
       const user = await firebase.firestore()
         .collection('users')
         .doc(uid)
@@ -110,7 +113,7 @@ export default class UserStore {
         .then(doc => doc.exists && doc.data())
         .catch(error => this.stores.SystemMessageStore.handleError(error));
 
-      this.data = new UserModel({uid,...user});
+      this.data = new UserModel({uid, ...user});
 
       console.log('getUserByUsername data', user, this.data);
       this.status = 'ready';
@@ -125,10 +128,10 @@ export default class UserStore {
     console.log('updateUserById', {id, first, last, born, bio});
     try {
       const user = this.list.get(id);
-      user.first =  first;
-      user.last =  last;
-      user.born =  born;
-      user.bio =  bio;
+      user.first = first;
+      user.last = last;
+      user.born = born;
+      user.bio = bio;
       user.save();
       console.log('updateUserById data', user);
       this.status = 'ready';

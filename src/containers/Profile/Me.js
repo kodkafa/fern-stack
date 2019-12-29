@@ -2,7 +2,7 @@ import {inject, observer} from 'mobx-react';
 import {autorun} from 'mobx';
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import ImageViewer from 'components/Common/ImageViewer'
+import {ImageViewer} from 'components'
 import {Button, Modal, ModalBody, ModalFooter} from "reactstrap";
 import AvatarEditor from "react-avatar-editor";
 
