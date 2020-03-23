@@ -4,30 +4,12 @@ import 'firebase/firestore';
 import 'firebase/database';
 import 'firebase/auth';
 import {UserModel} from "../models/UserModel";
+import moment from "moment";
 
 export default class {
-  @observable authenticated = null;
+  @observable authenticated = false;
   @observable uid = null;
   @observable me = new UserModel({});
-
-
-  // console.log('user model constructor', data);
-  // this.uid = data.uid;
-  // this.username = data.hasOwnProperty('username')? data.username : data.uid;
-  // this.phoneNumber = data.phoneNumber;
-  // this.email = data.email;
-  // this.emailVerified = data.emailVerified;
-  // this.name = this.displayName = data.displayName;
-  // this.photoURL = data.photoURL || 'http://holder.ninja/ninja,fee:300x300.svg';
-  // this.metadata = data.metadata;
-  // this.lastLogin = this.metadata && this.metadata.lastSignInTime;
-  // this.createdAt = this.metadata && this.metadata.creationTime;
-  // this.providerData = data.providerData;
-  // this.customClaims = data.customClaims || {};
-  // this.icon = this.isAdmin() ? 'fas fa-user-astronaut'
-  //   : this.isEditor() ? 'fa fa-user-secret'
-  //     : this.isManager() || this.isWorker() ? 'fa fa-user-tie' : 'fa fa-user';
-  // this.disabled = data.disabled;
 
   constructor(Stores) {
     this.stores = Stores;
@@ -151,6 +133,7 @@ export default class {
     let callback = null;
     let metadataRef = null;
     firebase.auth().onAuthStateChanged(user => {
+      this.authenticated = null;
       if (callback)
         metadataRef.off('value', callback);
       if (user) {
@@ -158,7 +141,7 @@ export default class {
         callback = (snapshot) => user.getIdToken(true);
         metadataRef.on('value', callback);
         return this.getUserData(user)
-      }
+      } else this.authenticated = false;
     });
   };
 
@@ -188,5 +171,10 @@ export default class {
     this.displayName = displayName;
     return firebase.auth().currentUser.updateProfile({displayName});
   };
+
+  date = (date) => {
+    return moment(date).format('YYYY-MM-DD HH:ss')
+    // return moment(date).tz('Turkey').format('YYYY-MM-DD HH:ss')
+  }
 
 }

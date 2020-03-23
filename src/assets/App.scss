@@ -1,0 +1,21 @@
+@import 'variables';
+@import 'mixins';
+@import 'keyframes';
+
+@import "~bootstrap/scss/bootstrap";
+@import '~nprogress/nprogress';
+
+@import 'global';
+@import 'navbar';
+@import 'sidebar';
+@import 'main';
+@import 'forms';
+
+
+@import '../pages/Welcome/Welcome';
+@import '../pages/Features/Features';
+@import '../pages/Users/Users';
+@import '../pages/Profile/Profile';
+@import '../pages/Settings/Settings';
+
+

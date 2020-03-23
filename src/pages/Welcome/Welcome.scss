@@ -1,0 +1,107 @@
+header.intro {
+  position: relative;
+  text-align: center;
+  color: white;
+  background-image: url('../../assets/img/intro-header-bg.jpg');
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-position: center center;
+  background-size: cover;
+
+  > .container {
+    display: flex;
+    height: 100%;
+  }
+
+  .intro-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+    .intro-lead-in {
+      font-size: 22px;
+      font-style: italic;
+      line-height: 22px;
+      margin-bottom: 25px;
+      @include serif-font;
+    }
+
+    .intro-heading {
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 50px;
+      margin-bottom: 25px;
+      @include heading-font;
+
+      .highlight {
+        display: inline-block;
+        padding: 0 10px;
+        background: $black;
+        border-radius: 2px;
+      }
+    }
+  }
+
+  #backgroundBadge {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+
+    a {
+      background-color: black;
+      color: white;
+      text-decoration: none;
+      padding: 4px 6px;
+      font-family: sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 1.2;
+      display: inline-block;
+      border-radius: 3px;
+      box-shadow: 0 0 3px #888;
+
+      span {
+        display: inline-block;
+        padding: 2px 3px;
+
+        svg {
+          height: 12px;
+          width: auto;
+          position: relative;
+          vertical-align: middle;
+          top: -2px;
+          fill: white;
+        }
+
+        :last-child {
+          display: inline-block;
+          padding: 2px 3px
+        }
+      }
+    }
+  }
+}
+
+@media(min-width: 768px) {
+  header.intro {
+    .intro-text {
+      .intro-lead-in {
+        font-size: 40px;
+        font-style: italic;
+        line-height: 40px;
+        margin-bottom: 25px;
+        @include serif-font;
+      }
+
+      .intro-heading {
+        font-size: 75px;
+        font-weight: 700;
+        line-height: 95px;
+        margin-bottom: 50px;
+        @include heading-font;
+      }
+    }
+  }
+}

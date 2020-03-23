@@ -1,24 +1,21 @@
 import {action, computed, observable, toJS} from 'mobx';
 import {SystemMessageModel} from '../models/SystemMessageModel';
+import React from 'react';
 
 export default class {
+  @observable newRelease = false;
   @observable _list = new observable.array();
 
   constructor(Stores) {
     this.stores = Stores;
-    //this.service = new UserService();
     this.model = SystemMessageModel;
-    //console.log('store: UserStore');
-    //this.deepEqual = require('deep-equal');
   }
 
   get list() {
-    // get from local stores
     return toJS(this._list)
   }
 
   get news() {
-    // get from local stores
     return this.list.filter(i => i.isDisplayed === false)
   }
 
@@ -34,45 +31,54 @@ export default class {
 
   @action
   add(doc) {
-    const item = new this.model(doc);//this.model.fromJS(doc); // ?
+    const item = new this.model(doc);
     const legacy = this._list.filter(i => i.createdAt === doc.createdAt);
-    console.log('system messages add', legacy.length, legacy);
+    console.log('system messages add', legacy.length, legacy, doc);
     if (legacy.length) {
-      if (JSON.stringify(item) !== JSON.stringify(legacy[0])
-      //if (item.toJS !== legacy[0].toJS
-      //if (item.toJS !== legacy[0].toJS
-      // !this.deepEqual(
-      //   item.toJS(),//this.model.toComparableJS(), ??
-      //   this._list.get(doc.id).toJS()
-      // )
-      )
+      if (JSON.stringify(item) !== JSON.stringify(legacy[0]))
         this._list.push(item);
     } else
       this._list.push(item);
-
-    console.log('system messages _list', this.list);
   }
 
   handleError({code, message}) {
-    this.add({status: 400, code, message, createdAt: new Date()})
+    console.log({message});
+    this.add({status: 400, code: code || 'ERROR', message: this.linkify(message), createdAt: new Date()})
   }
 
-  // toJS() {
-  //   return this.todos.map(item => item.toJS());
-  // }
+  @action
+  setNewRelease(v, message) {
+    this.newRelease = v;
+    this.add({
+      status: 100,
+      code: 'NEW_VERSION',
+      message,
+      createdAt: new Date(),
+      timeless: true
+    })
+  }
 
-  // static fromJS(array) {
-  //   const errorStore = new ErrorStore();
-  //   errorStore.list = array.map(item => this.model.fromJS(errorStore, item));
-  //   return errorStore;
-  // }
+  shortener = (text, max = 30) => {
+    return text.length > max ? text.substr(0, 20) + "..." : text;
+  };
 
-  // @action setUserLocation = () => {
-  //   navigator.geolocation.getCurrentPosition(position => {
-  //     runInAction(() => {
-  //       this.userLocation.lat = position.coords.latitude;
-  //       this.userLocation.lng = position.coords.longitude;
-  //     });
-  //   });
-  // };
+  linkify = (text) => {
+    //URLs starting with http://, https://, or ftp://
+    const patternURL = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gim;
+    //text = text.replace(patternURL, (link) => '<a href="' + link + '" target="_blank">' + this.shortener(link) + '</a>');
+    text = text.replace(patternURL, (link) => <a href={link} target="_blank"
+                                                 rel="noopener noreferrer">{this.shortener(link)}</a>);
+
+    //URLs starting with www. (without // before it, or it'd re-link the ones done above)
+    const patternWWW = /(^|[^/])(www\.[\S]+(\b|$))/gim;
+    //text = text.replace(patternWWW, '$1<a href="http://$2" target="_blank">$2</a>');
+    text = text.replace(patternWWW, <React.Fragment>{'$1'}<a href={"http://$2"} target="_blank"
+                                                             rel="noopener noreferrer">{'$2'}</a></React.Fragment>);
+
+    //Change email addresses to mailto:: links
+    const patternMAIL = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim;
+    text = text.replace(patternMAIL, <a href={"mailto:$1"} rel="noopener noreferrer">{'$1'}</a>);
+
+    return text
+  };
 }

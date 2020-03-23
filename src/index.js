@@ -2,23 +2,40 @@ import React from "react";
 import ReactDOM from "react-dom";
 import * as serviceWorker from './serviceWorker';
 import App from "./App";
+import {Provider} from "mobx-react";
+import {stores} from "./stores";
 
 const render = Component => {
   ReactDOM.render(
-    <Component/>,
+    <Provider {...stores}><Component/></Provider>,
     document.getElementById('root')
   );
 };
 
-serviceWorker.register();
+serviceWorker.register({
+  onUpdate: registration => {
+    registration.unregister().then(() => {
+      caches.keys().then(function (cacheNames) {
+        Promise.all(
+          cacheNames.map(function (cacheName) {
+            return caches.delete(cacheName);
+          }))
+          .then(() => {
+            console.log('new version is released!');
+            const message = <span>New version is released. Please
+      <button className="btn-link" onClick={() => window.location.reload()}>refresh</button> the
+      page</span>;
+            stores.SystemMessageStore.setNewRelease(true, message);
+          })
+      })
+    });
+  },
+});
 render(App);
 
-if (module.hot) {
-  console.debug('hot module');
-  module.hot.accept('./App', () => {
-    render(App);
-  });
-}
-
-
-
+// if (module.hot) {
+//   console.debug('hot module');
+//   module.hot.accept('./App', () => {
+//     render(App);
+//   });
+// }

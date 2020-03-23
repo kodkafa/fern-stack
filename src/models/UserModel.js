@@ -1,9 +1,9 @@
 import firebase from 'firebase/app';
 import {computed, observable} from "mobx";
-import {stores} from "stores";
-
-const toDate = (date) => date instanceof firebase.firestore.Timestamp ? date.toDate() : firebase.firestore.Timestamp.fromDate(date).toDate();
-
+import {stores} from "../stores";
+//
+// const toDate = (date) => date instanceof firebase.firestore.Timestamp ? date.toDate() : firebase.firestore.Timestamp.fromDate(date).toDate();
+//
 
 export class UserModel {
 

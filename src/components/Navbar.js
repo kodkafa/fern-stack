@@ -1,11 +1,12 @@
+import {inject, observer} from "mobx-react";
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {HashLink} from 'react-router-hash-link';
-import SystemMessages from './SystemMessages';
-import logo from '../styles/img/logo.svg';
-import {inject, observer} from "mobx-react";
+import {SystemMessages} from './SystemMessages';
+import logo from '../assets/img/logo.svg';
 import {computed} from "mobx";
 import {ImageViewer} from './ImageViewer'
+
 
 @inject('AuthStore')
 @observer
@@ -19,6 +20,10 @@ class Navbar extends Component {
     return this.props.AuthStore.me
   }
 
+  get isShrink() {
+    return this.props.className.indexOf('navbar-shrinked') > -1
+  }
+
   static dropDownToggle(e) {
     const dd = e.currentTarget;
     dd.classList.toggle('show');
@@ -27,7 +32,7 @@ class Navbar extends Component {
 
   static Shrink(e, shrink) {
     const navbar = document.getElementById('navbar');
-    if (shrink || window.pageYOffset > 1) {
+    if (shrink || window.pageYOffset > 0) {
       navbar.classList.add("navbar-shrink");
     } else {
       navbar.classList.remove("navbar-shrink");
@@ -35,26 +40,29 @@ class Navbar extends Component {
   }
 
   componentDidMount() {
-    Navbar.Shrink(null, this.authenticated);
-    if (!this.authenticated)
+    if (!this.isShrink) {
+      Navbar.Shrink(null, !!this.me.uid);
       window.addEventListener('scroll', Navbar.Shrink);
+    }
+    // else
+    //   window.removeEventListener('scroll', Navbar.Shrink);
   }
 
-  componentDidUpdate(props) {
-    Navbar.Shrink(null, this.authenticated);
-    if (this.authenticated)
-      window.removeEventListener('scroll', Navbar.Shrink);
-    else
-      window.addEventListener('scroll', Navbar.Shrink);
-  }
+  //
+  // componentDidUpdate(props) {
+  //   Navbar.Shrink(null, this.authenticated);
+  //   if (this.authenticated)
+  //     window.removeEventListener('scroll', Navbar.Shrink);
+  //   else
+  //     window.addEventListener('scroll', Navbar.Shrink);
+  // }
 
 
   renderLogo() {
-    return <Link to={this.props.me ? "/home" : "/"} className="navbar-brand" key="logo">
-      <img src={logo} className="img-fluid" alt="logo"/>
+    return <Link to={this.me.uid ? "/home" : "/"} className="navbar-brand" key="logo">
+      <img id="logo" src={logo} className="img-fluid" alt="logo"/>
     </Link>
   }
-
   renderLinks() {
     const {authenticated, me} = this;
     console.log('me', me, me.isWorker());
@@ -70,9 +78,12 @@ class Navbar extends Component {
         </li>}
       </React.Fragment>
     } else {
-      return [<li className="nav-item" key="features">
-        <Link className="nav-link" to="/features">Features</Link>
-      </li>];
+      return [<li className="nav-item" key="about">
+        <HashLink smooth className="nav-link" to="/#about">About</HashLink>
+      </li>,
+        <li className="nav-item" key="features">
+          <Link className="nav-link" to="/features">Features</Link>
+        </li>];
     }
   }
 
@@ -87,6 +98,7 @@ class Navbar extends Component {
             <i className={me.icon}/> <strong>{me.first}</strong>
           </span>
           <div className="dropdown-menu">
+            <Link className="dropdown-item" to="/dashboard">Dashboard</Link>
             <Link className="dropdown-item" to="/profile">Profile</Link>
             <Link className="dropdown-item" to="/settings">Settings</Link>
             <div className="dropdown-divider"/>
@@ -108,7 +120,7 @@ class Navbar extends Component {
 
   render() {
     return (
-      <nav id="navbar" className="navbar navbar-expand-lg navbar-light fixed-top">
+      <nav id="navbar" className={"navbar navbar-expand-lg fixed-top " + this.props.className}>
         <div className="container">
           {this.renderLogo()}
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMain"
@@ -118,9 +130,6 @@ class Navbar extends Component {
 
           <div className="collapse navbar-collapse" id="navbarMain">
             <ul className="navbar-nav mr-auto">
-              <li className="nav-item" key="about">
-                <HashLink smooth className="nav-link" to="/#about">About</HashLink>
-              </li>
               {this.renderLinks()}
             </ul>
 

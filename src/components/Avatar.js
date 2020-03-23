@@ -1,6 +1,6 @@
 import React from 'react';
 import {ImageViewer} from './ImageViewer'
-import avatar from "../styles/img/avatar.svg"
+import avatar from "../assets/img/avatar.svg"
 
 export const Avatar = (props) => {
   const checkSrc = (src) => {
