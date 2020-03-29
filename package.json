@@ -1,6 +1,6 @@
 {
   "name": "firebase-react",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.6.0",
