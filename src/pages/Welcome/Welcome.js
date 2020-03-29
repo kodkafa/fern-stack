@@ -1,16 +1,15 @@
+import {inject, observer} from "mobx-react";
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {HashLink} from 'react-router-hash-link';
 
+@inject('UIStore')
+@observer
 class Welcome extends Component {
-
-  componentDidMount() {
-    document.getElementById('intro').style.height = window.innerHeight + 'px';
-  }
-
   render() {
+    const {height} = this.props.UIStore;
     return <React.Fragment>
-      <header id="intro" className="intro">
+      <header id="intro" className="intro" style={{height}}>
         <div className="container">
           <div className="intro-text">
             <h2 className="intro-lead-in">Welcome,</h2>

@@ -9,7 +9,7 @@ const FormikForm = ({
                       errors,
                       isSubmitting
                     }) => (
-  <section className="cover bg-light">
+  <section id="auth" className="cover bg-light">
     <div className="container">
       <div className="row h-100 justify-content-md-center">
         <div className="col-sm-4 my-auto">
@@ -50,6 +50,11 @@ class EnhancedForm extends Component {
       email: null,
       password: null
     }
+  }
+
+  componentDidMount() {
+    const auth = document.getElementById('auth');
+    if (auth) auth.style.height = window.innerHeight + 'px';
   }
 
   handleSubmit = (values, {props, setFieldError, setSubmitting, setStatus}) => {
@@ -94,10 +99,4 @@ class EnhancedForm extends Component {
   }
 }
 
-//
-// const mapStateToProps = (state) => {
-//   typeof setSubmittingHigher === 'function' && setSubmittingHigher(false);
-//   return {system: state.system, me: state.auth.me}
-// };
-
-export default EnhancedForm//connect(mapStateToProps, {userSignIn})(EnhancedForm);
+export default EnhancedForm

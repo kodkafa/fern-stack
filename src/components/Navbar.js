@@ -5,7 +5,8 @@ import {HashLink} from 'react-router-hash-link';
 import {SystemMessages} from './SystemMessages';
 import logo from '../assets/img/logo.svg';
 import {computed} from "mobx";
-import {ImageViewer} from './ImageViewer'
+import {ImageViewer} from './ImageViewer';
+import packageJson from '../../package.json';
 
 
 @inject('AuthStore')
@@ -44,23 +45,13 @@ class Navbar extends Component {
       Navbar.Shrink(null, !!this.me.uid);
       window.addEventListener('scroll', Navbar.Shrink);
     }
-    // else
-    //   window.removeEventListener('scroll', Navbar.Shrink);
   }
-
-  //
-  // componentDidUpdate(props) {
-  //   Navbar.Shrink(null, this.authenticated);
-  //   if (this.authenticated)
-  //     window.removeEventListener('scroll', Navbar.Shrink);
-  //   else
-  //     window.addEventListener('scroll', Navbar.Shrink);
-  // }
 
 
   renderLogo() {
-    return <Link to={this.me.uid ? "/home" : "/"} className="navbar-brand" key="logo">
+    return <Link to={this.me.uid ? "/dashboard" : "/"} className="navbar-brand" key="logo">
       <img id="logo" src={logo} className="img-fluid" alt="logo"/>
+      <span className="version">v{packageJson.version}</span>
     </Link>
   }
   renderLinks() {

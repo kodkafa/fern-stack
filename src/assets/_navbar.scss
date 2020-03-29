@@ -11,8 +11,8 @@
   }
 
   .navbar-brand {
-
-    width: 180px;
+    position: relative;
+    width: 220px;
     height: 48px;
     background: url(./img/logo-dark.svg) center left no-repeat;
     background-size: contain;
@@ -23,6 +23,13 @@
     &:focus,
     &:hover {
       color: darken($black, 10%);
+    }
+    .version {
+      position: absolute;
+      top: 2px;
+      right: 0;
+      font-size: xx-small;
+      color: $gray-500;
     }
   }
 
@@ -117,7 +124,11 @@
       .navbar-brand {
         width: 160px;
         height: 32px;
-        background: url(./img/logo.svg) center center no-repeat;
+        background: url(./img/logo.svg) center left no-repeat;
+
+        .version {
+          top: 1px;
+          }
       }
 
       .navbar-nav {

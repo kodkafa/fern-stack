@@ -1,4 +1,4 @@
-import {action, computed, observable} from 'mobx';
+import {action, observable} from 'mobx';
 
 export default class {
   @observable height = window.innerHeight;
@@ -8,7 +8,6 @@ export default class {
 
   constructor(Stores) {
     this.stores = Stores;
-    //console.log('store: UIStore');
   }
 
   @observable loader = false;
@@ -20,45 +19,13 @@ export default class {
     name: 'English',
     icon: 'us',
   };
-  //@observable width = window.innerWidth;
-  @observable initURL = '/';
-  @observable navCollapsed = false;
-  @observable intlProviderRef = null;
 
-  @action
-  setIntlProviderRef = r => {
-    this.intlProviderRef = r;
-  };
-
-  showAuthLoader() {
-    this.loader = true;
-  }
-
-  hideAuthLoader() {
-    this.loader = false;
-  }
-
-  hideMessage() {
-    this.showMessage = false;
-  }
-
-  @action
-  updateWindowWidth(width) {
-    this.width = width;
-  }
-
-  @action
-  toggleCollapsedSideNav() {
-    this.navCollapsed = !this.navCollapsed;
-  }
-
-  @action
-  onNavStyleChange = navStyle => {
-    this.navStyle = navStyle;
-  };
-
-  @computed
-  get fullMap() {
-    return this.width < 800;
-  }
+  // @observable initURL = '/';
+  // @observable navCollapsed = false;
+  // @observable intlProviderRef = null;
+  //
+  // @action
+  // setIntlProviderRef = r => {
+  //   this.intlProviderRef = r;
+  // };
 }

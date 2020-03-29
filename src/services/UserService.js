@@ -3,8 +3,6 @@ import {APIURL} from "../firebase/initialize";
 
 class UserService {
 
-
-
   getToken = async () => {
     try {
       return await firebase
@@ -80,6 +78,8 @@ class UserService {
 
   toggleAdmin = async (id, model) => {
     const token = await this.getToken();
+    console.log('toggleAdmin', {model});
+
     const options = {
       method: "PUT",
       mode: 'cors',

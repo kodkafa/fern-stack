@@ -10,7 +10,7 @@ import Reset from './pages/Auth/Reset';
 import NewPassword from './pages/Auth/NewPassword';
 import Welcome from './pages/Welcome';
 import Features from './pages/Features';
-import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Me from './pages/Profile/Me';
 import Settings from './pages/Settings';
@@ -79,7 +79,7 @@ class Routes extends Component {
           <GuestRoute exact path="/reset" component={Reset}/>
           <GuestRoute exact path="/newpassword/:token" component={NewPassword}/>
 
-          <RestrictedRoute exact path="/home" component={Home} authenticated={authenticated}/>
+          <RestrictedRoute exact path="/dashboard" component={Dashboard} authenticated={authenticated}/>
           <RestrictedRoute exact path="/profile" component={Me} authenticated={authenticated}/>
           <RestrictedRoute exact path="/settings/:page?" component={Settings} authenticated={authenticated}/>
           <RestrictedRoute exact path="/users/:id" component={User} authenticated={authenticated}/>

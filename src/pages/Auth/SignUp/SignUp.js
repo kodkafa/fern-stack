@@ -10,7 +10,8 @@ const FormikForm = ({
                       errors,
                       status,
                       isSubmitting
-                    }) => (<section className="cover  bg-light">
+                    }) => (
+  <section id="auth" className="cover  bg-light">
     <div className="container">
       <div className="row h-100 justify-content-md-center">
         <div className="col-sm-4 my-auto">
@@ -82,18 +83,23 @@ class EnhancedForm extends Component {
     }
   }
 
+  componentDidMount() {
+    const auth = document.getElementById('auth');
+    if (auth) auth.style.height = window.innerHeight + 'px';
+  }
+
   handleSubmit = (values, {props, setFieldError, setSubmitting, setStatus}) => {
     setStatus(null);
     console.log({values});
     //await props.AuthStore.userSignUp(values);
     try {
-        this.props.AuthStore.createUserWithEmailPassword(values);
-        //setStatus({'success': 'Your account has been created successfully!'})
-        setSubmitting(false);
-        //resetForm();
+      this.props.AuthStore.createUserWithEmailPassword(values);
+      //setStatus({'success': 'Your account has been created successfully!'})
+      setSubmitting(false);
+      //resetForm();
     } catch (errors) {
-        //setStatus({'error': errors})
-        //setSubmitting(false);
+      //setStatus({'error': errors})
+      //setSubmitting(false);
     }
   };
 

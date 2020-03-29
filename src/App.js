@@ -6,7 +6,7 @@ import {ScrollToTop} from "./components";
 import {I18nextProvider} from 'react-i18next';
 import i18next from 'i18next';
 
-import Home from "./pages/Home/translations-en.json";
+import Home from "./pages/Dashboard/translations-en.json";
 
 i18next.init({
   interpolation: {escapeValue: false},  // React already does escaping

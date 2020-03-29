@@ -8,7 +8,6 @@ export default class UserStore {
   @observable isReady = false;
   dbListener = null;
   @observable _list = new observable.map();
-  //@observable list = [];
   @observable user = null;
 
   @observable data = null;
@@ -19,8 +18,6 @@ export default class UserStore {
     this.stores = Stores;
     this.service = new UserService();
     this.model = UserModel;
-    //console.log('store: UserStore');
-    this.deepEqual = require('deep-equal');
   }
 
   get list() {
@@ -247,26 +244,6 @@ export default class UserStore {
     //   });
   };
 
-//
-// @computed
-// get users() {
-//   if (!this.dbListener) {
-//     this.listenToDB();
-//   }
-//   return this._list;
-// }
-
-// subscribeServerToStore() {
-//   reaction(
-//     () => this.toJS(),
-//     list => fetch('http://localhost:5001/kodkafa-firebase/us-central1/listUsers', {
-//       method: 'post',
-//       mode: 'cors',
-//       body: JSON.stringify({list}),
-//       headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}
-//     })
-//   );
-// }
 
   listenToDB = agencyId => {
     this.dbListener = firebase
@@ -305,23 +282,4 @@ export default class UserStore {
       this._list.set(doc.uid, item);
   }
 
-//
-// toJS() {
-//   return this.todos.map(item => item.toJS());
-// }
-//
-// static fromJS(array) {
-//   const userStore = new UserStore();
-//   userStore.list = array.map(item => this.model.fromJS(userStore, item));
-//   return userStore;
-// }
-
-// @action setUserLocation = () => {
-//   navigator.geolocation.getCurrentPosition(position => {
-//     runInAction(() => {
-//       this.userLocation.lat = position.coords.latitude;
-//       this.userLocation.lng = position.coords.longitude;
-//     });
-//   });
-// };
 }

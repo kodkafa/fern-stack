@@ -41,15 +41,6 @@ const routes = [
     name: 'Change Password',
     main: ChangePassword
   },
-  {
-    path: '/settings/change-email',
-    link: '/settings/change-email',
-    icon: 'fa fa-key',
-    exact: true,
-    title: () => <h1 className="h5">Change Email</h1>,
-    name: 'Change Email',
-    main: ChangePassword
-  },
 ];
 
 class Settings extends PureComponent {
