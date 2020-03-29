@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "kodkafa",
     "public": "build",
     "ignore": [
       "firebase.json",
