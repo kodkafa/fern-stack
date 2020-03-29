@@ -45,7 +45,7 @@
     "minor": "yarn version --minor && git push",
     "major": "yarn version --major && git push",
     "merge": "git push origin dev:master",
-    "deploy": "firebase deploy --only=hosting"
+    "deploy": "yarn build && firebase deploy --only=hosting"
   },
   "eslintConfig": {
     "extends": "react-app"
