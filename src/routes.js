@@ -15,8 +15,7 @@ import Profile from './pages/Profile';
 import Me from './pages/Profile/Me';
 import Settings from './pages/Settings';
 import Users from './pages/Users';
-import User from './pages/User';
-import UserEdit from './pages/User/Edit';
+import UserEdit from './pages/Users/Edit';
 import NoMatch from './pages/NoMatch';
 import TermsOfService from "./pages/StaticPages/TermsOfService";
 import PrivacyPolicy from "./pages/StaticPages/PrivacyPolicy";
@@ -41,33 +40,32 @@ const GuestRoute = ({component: Component, layout: Layout = LayoutGuest, ...rest
     render={props => <Layout><Component {...props} /></Layout>}
   />;
 
-@inject('AuthStore')
+@inject('UIStore', 'AuthStore')
 @observer
 class Routes extends Component {
 
   componentDidMount() {
     const {authenticated, handleAuth} = this.props.AuthStore;
-    // // window.addEventListener('resize', () => {
-    // //   this.props.UIStore.updateWindowWidth(window.innerWidth)
-    // // })
-    //
-    console.log('pathname', this.props.location);
+    window.addEventListener('resize', () => {
+      this.props.UIStore.setWidth(Math.max(document.body.scrollWidth, window.innerWidth));
+      this.props.UIStore.setHeight(Math.max(document.body.scrollHeight, window.innerHeight));
+    });
+    console.log(document.body.scrollHeight, Math.max(document.body.scrollHeight, window.innerHeight), window.innerHeight);
     if (authenticated === false) {
       handleAuth();
     } else {
       const location = this.props.location.pathname + this.props.location.search + this.props.location.hash;
-      console.log({location})
-      localStorage.setItem('location', location || '/home');
+      localStorage.setItem('location', location || '/dashboard');
     }
   }
 
   render() {
     const {authenticated} = this.props.AuthStore;
-    if (!['/signin', '/signup'].includes(this.props.location.pathname)) {
+    if (!['/signin', '/signup', '/reset'].includes(this.props.location.pathname)) {
       localStorage.setItem('location', this.props.location.pathname + this.props.location.search + this.props.location.hash);
     }
     return (
-      (authenticated === null) ? <Loader backgroud={true}/>
+      (authenticated === null) ? <Loader backgroud={true} height={this.props.UIStore.height}/>
         : <Switch>
           <GuestRoute exact path="/" component={Welcome} layout={LayoutWelcome}/>
           <GuestRoute exact path="/features" component={Features}/>
@@ -82,7 +80,6 @@ class Routes extends Component {
           <RestrictedRoute exact path="/dashboard" component={Dashboard} authenticated={authenticated}/>
           <RestrictedRoute exact path="/profile" component={Me} authenticated={authenticated}/>
           <RestrictedRoute exact path="/settings/:page?" component={Settings} authenticated={authenticated}/>
-          <RestrictedRoute exact path="/users/:id" component={User} authenticated={authenticated}/>
           <RestrictedRoute exact path="/users/:id/edit" component={UserEdit} authenticated={authenticated}/>
           <RestrictedRoute exact path="/users/:page?/:id?" component={Users} authenticated={authenticated}/>
 

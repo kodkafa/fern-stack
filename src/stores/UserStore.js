@@ -24,7 +24,6 @@ export default class UserStore {
     if (!this.dbListener) {
       this.listenToDB();
     }
-    console.log('list user', this.dbListener, this._list);
     return this._list;
   }
 
@@ -35,7 +34,6 @@ export default class UserStore {
 
   @action
   getUsers = async () => {
-    console.log('getUsers');
     try {
       const params = {
         // pageNumber: this.pageNumber,
@@ -49,10 +47,8 @@ export default class UserStore {
       // this.data = data;
       // console.log('function call users', this.data);
       this.data = await this.service.get(urlParams);
-      console.log('service call users', this.data);
       this.data.map(item => new UserModel(item));
       this.status = 'ready';
-      console.log('user store data', this.data);
     } catch (error) {
       this.status = "error";
       console.error(error);
@@ -62,9 +58,9 @@ export default class UserStore {
 
   @action
   getUserById = async (uid) => {
-    console.log('getUserById', uid);
+    const item = this._list.get(uid);
+    if (item) return item;
     try {
-      //this.data = await this.service.get(id);
       const user = firebase.firestore()
         .collection('users')
         .doc(uid)
@@ -72,13 +68,7 @@ export default class UserStore {
         .then()
         .catch(error => this.stores.SystemMessageStore.handleError(error));
       this.data = new UserModel(user);
-      console.log('getUserById data', this.data);
       this.status = 'ready';
-
-      console.log('user store data', this.data);
-      this.handleAdd(user)
-
-      //return this.data;
     } catch (error) {
       this.status = "error";
       console.error(error);
@@ -87,10 +77,8 @@ export default class UserStore {
 
   @action
   getUserByUsername = async (username) => {
-    console.log('getUserByUsername', username);
     if (!username) return;
     try {
-      //this.data = await this.service.get(id);
       const uid = username.match(/^.{5,22}$/)
         ? await firebase.firestore()
           .collection('usernames')
@@ -111,8 +99,6 @@ export default class UserStore {
         .catch(error => this.stores.SystemMessageStore.handleError(error));
 
       this.data = new UserModel({uid, ...user});
-
-      console.log('getUserByUsername data', user, this.data);
       this.status = 'ready';
       return this.data;
     } catch (error) {
@@ -122,7 +108,6 @@ export default class UserStore {
   };
 
   updateUserById = async ({id, first, last, born, bio}) => {
-    console.log('updateUserById', {id, first, last, born, bio});
     try {
       const user = this.list.get(id);
       user.first = first;
@@ -130,10 +115,7 @@ export default class UserStore {
       user.born = born;
       user.bio = bio;
       user.save();
-      console.log('updateUserById data', user);
       this.status = 'ready';
-      console.log('user store data', this.data);
-      //return this.data;
     } catch (error) {
       this.status = "error";
       console.error(error);
@@ -141,27 +123,22 @@ export default class UserStore {
   };
 
   updateMe = async ({first, last, born, bio}) => {
-    console.log('this.stores.AuthStore.me', this.stores.AuthStore.me);
     const uid = this.stores.AuthStore.me.uid;
-    console.log('updateMe', {uid, first, last, born, bio});
     try {
       await firebase.firestore()
         .collection('users')
         .doc(uid)
         .update({first, last, born, bio})
-        .then()
-        .catch(error => this.stores.SystemMessageStore.handleError(error));
-      //await this.service.put(uid, {first, last, born, bio});
+        .then();
       await this.stores.AuthStore.getUserData({uid});
       this.status = 'ready';
     } catch (error) {
-      this.status = "error";
-      console.error(error);
+      return  this.stores.SystemMessageStore.handleError(error)
     }
+    return true;
   };
 
   deleteImage = (name) => {
-    console.log('name', name);
     if (typeof name === 'string') {
       const storage = firebase.storage();
       storage.ref('images/').child(name).delete()

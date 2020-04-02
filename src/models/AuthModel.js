@@ -1,7 +1,6 @@
 export class AuthModel {
 
   constructor(data) {
-    console.log('auth model constructor', data);
     this.uid = data.uid;
     this.phoneNumber = data.phoneNumber;
     this.email = data.email;

@@ -44,3 +44,11 @@ firebase deploy
 
 you can visit your  "my-project.firebaseapp.com" 
 
+```
+ @firebase/database: FIREBASE WARNING: {"code":"app/invalid-credential",
+ "message":"Credential implementation provided to initializeApp() via 
+ the \"credential\" property failed to fetch a valid Google OAuth2 access token 
+ with the following error: \"Error fetching access token: Error while making request: 
+ getaddrinfo ENOTFOUND metadata.google.internal. Error code: ENOTFOUND\"."} 
+```
+

@@ -33,7 +33,6 @@ export default class {
   add(doc) {
     const item = new this.model(doc);
     const legacy = this._list.filter(i => i.createdAt === doc.createdAt);
-    console.log('system messages add', legacy.length, legacy, doc);
     if (legacy.length) {
       if (JSON.stringify(item) !== JSON.stringify(legacy[0]))
         this._list.push(item);
@@ -42,8 +41,8 @@ export default class {
   }
 
   handleError({code, message}) {
-    console.log({message});
-    this.add({status: 400, code: code || 'ERROR', message: this.linkify(message), createdAt: new Date()})
+    this.add({status: 400, code: code || 'ERROR', message: this.linkify(message), createdAt: new Date()});
+    return false
   }
 
   @action

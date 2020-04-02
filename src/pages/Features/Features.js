@@ -21,7 +21,18 @@ class Features extends Component {
             <td className="text-center"/>
           </tr>
           <tr>
-            <td>Password Recovery</td>
+            <td>
+              Password Recovery
+              <div className="small text-muted">Users can recover with Firebase.</div>
+            </td>
+            <td className="text-center"><i className="fas fa-check"/></td>
+            <td className="text-center"/>
+          </tr>
+          <tr>
+            <td>
+              Password Recovery (Customize)
+              <div className="small text-muted">Users can set new password on the website.</div>
+            </td>
             <td className="text-center"/>
             <td className="text-center"><i className="fas fa-check"/></td>
           </tr>
@@ -74,16 +85,38 @@ class Features extends Component {
           </tr>
           <tr>
             <td>
+              Dashboard Layout
+              <div className="small text-muted">Dashboard layout for logged users.</div>
+            </td>
+            <td className="text-center"><i className="fas fa-check"/></td>
+            <td className="text-center"/>
+          </tr>
+          <tr>
+            <td>
               Activity Log
               <div className="small text-muted">All users activity will be logged.</div>
             </td>
             <td className="text-center"/>
             <td className="text-center"><i className="fas fa-check"/></td>
           </tr>
+          <tr>
+            <td>Version Control
+              <div className="small text-muted">Show version number in package.json and manage with custom yarn commands.</div>
+            </td>
+            <td className="text-center"><i className="fas fa-check"/></td>
+            <td className="text-center"/>
+          </tr>
+          <tr>
+            <td>PWA
+              <div className="small text-muted">Progressive Web App and new version alert.</div>
+            </td>
+            <td className="text-center"><i className="fas fa-check"/></td>
+            <td className="text-center"/>
+          </tr>
         </table>
 
         <h2 className="h3">Packages</h2>
-        <p>React 16.4, Firebase 7.6, Mobx 5.15, Bootstrap 4.4 (Reactstrap), React Router 5.1, Formik 2.0</p>
+        <p>React 16.12, Firebase 7.6, Mobx 5.15, Bootstrap 4.4 (Reactstrap), React Router 5.1, Formik 2.0</p>
       </div>
     </section>;
   }

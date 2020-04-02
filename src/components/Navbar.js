@@ -56,14 +56,13 @@ class Navbar extends Component {
   }
   renderLinks() {
     const {authenticated, me} = this;
-    console.log('me', me, me.isWorker());
     if (authenticated) {
       return <React.Fragment>
-        {me.isWorker() &&
+        {me.isWorker &&
         <li className="nav-item">
           <Link className="nav-link" to="/works">Works</Link>
         </li>}
-        {(me.isManager() || me.isAdmin()) &&
+        {(me.isManager || me.isAdmin) &&
         <li className="nav-item">
           <Link className="nav-link" to="/users">Users</Link>
         </li>}

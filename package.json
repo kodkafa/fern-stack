@@ -38,14 +38,16 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
+    "start:functions": "export GOOGLE_APPLICATION_CREDENTIALS=../firebase-config.json && firebase emulators:start  --only functions",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
-    "start:functions": "firebase emulators:start  --only functions",
     "patch": "yarn version --patch && git push",
     "minor": "yarn version --minor && git push",
     "major": "yarn version --major && git push",
     "merge": "git push origin dev:master",
-    "deploy": "yarn build && firebase deploy --only=hosting"
+    "deploy": "yarn build && firebase deploy --only=hosting",
+    "deploy:functions": "yarn build && firebase deploy --only=functions",
+    "deploy:all": "yarn build && firebase deploy"
   },
   "eslintConfig": {
     "extends": "react-app"

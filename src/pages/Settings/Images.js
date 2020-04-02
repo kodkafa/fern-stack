@@ -41,13 +41,10 @@ class Images extends Component {
   }
 
   handleFileChange(e) {
-    //this.handleImageUpload(e.target.id, e.target.files[0])
-    console.log({e});
     if (e.target.id === 'avatar') {
       this.setState({image: e.target.files[0], avatarModal: true});
     }
     if (e.target.id === 'cover') {
-      console.log('cover');
       const width = document.getElementById('cover-figure').offsetWidth;
       const height = width * .25;
       this.setState({cover: e.target.files[0], width, height});
@@ -61,28 +58,19 @@ class Images extends Component {
   setEditorRef = (editor) => this.editor = editor;
 
   handleScaleChange = (e) => {
-    console.log('handleScaleChange', e.target.value);
     this.setState({scale: e.target.value})
-    //this.editor.scale = e.val();
   };
 
   uploadAvatar = async () => {
     if (this.editor) {
-
-      // const canvas = this.editor.getImage().toDataURL();
-      // const image = await fetch(canvas)
-      //   .then(res => res.blob());
-
       const canvas = this.editor.getImageScaledToCanvas().toDataURL();
       const image = await fetch(canvas)
         .then(res => res.blob());
-
       this.props.UserStore.uploadAvatar(image, () => {
       }, () => {
       }, () => {
         this.toggleAvatarModal()
       });
-      console.log({image});
     }
   };
 

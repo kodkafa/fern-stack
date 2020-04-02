@@ -1,5 +1,7 @@
 header.intro {
+  display: flex;
   position: relative;
+  min-height: 100vh;
   text-align: center;
   color: white;
   background-image: url('../../assets/img/intro-header-bg.jpg');
@@ -7,12 +9,7 @@ header.intro {
   background-attachment: scroll;
   background-position: center center;
   background-size: cover;
-
-  > .container {
-    display: flex;
-    height: 100%;
-  }
-
+  
   .intro-text {
     display: flex;
     flex-direction: column;

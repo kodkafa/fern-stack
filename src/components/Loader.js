@@ -1,10 +1,9 @@
-import {inject, observer} from "mobx-react";
 import React from 'react';
+import loader from "../assets/img/loading.svg";
 
-export const Loader = inject('UIStore')(observer((props) => {
-  const {height} = props.UIStore;
-  return <div className="loader" style={{height}}>
-    <div {...props} className="fa-3x">
-      <i className="fas fa-circle-notch fa-spin"/></div>
+export const Loader =props => {
+  const height = props.height || 'auto';
+  return <div className={'loader ' + (props.background ? 'background' : '')} style={{height}}>
+    <img width={80} height="auto" src={loader} alt="loading"/>
   </div>;
-}));
+};

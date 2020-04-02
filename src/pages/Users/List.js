@@ -27,71 +27,28 @@ class List extends Component {
     }
   }
 
-  componentDidMount() {
-    // console.log('componentDidMount', this.state);
-    // const {getUsers} = this.props.UserStore;
-    // if (this.state.query) {
-    //   const filter = {skip: Math.max(0, this.state.page - 1) * this.state.limit, limit: this.state.limit};
-    //   getUsers({query: this.state.query, filter});
-    // } else {
-    //   getUsers();
-    // }
-  }
-
-  componentDidUpdate(props) {
-    // const params = new URLSearchParams(props.location.search);
-    // const search = params.get('search') || '';
-    // const page = params.get('page') || 1;
-    // console.log('componentDidUpdate', props);
-    //
-    // if (page !== this.state.page) {
-    //   console.log('page', props);
-    //   const filter = {skip: Math.max(0, page - 1) * this.state.limit, limit: this.state.limit};
-    //   this.setState({page: page});
-    //   this.props.fetchList({query: this.state.query, filter});
-    // } else if (search !== this.state.search) {
-    //   console.log('search', props);
-    //   this.setState({search});
-    //   this.props.fetchList({query: search});
-    // }
-    //
-    // if (props.data && props.data.items) {
-    //   this.setState({
-    //     isLoading: false,
-    //     count: props.data.count,
-    //     items: props.data.items,
-    //     filteredItems: false
-    //   });
-    // }
-  }
-
   handleFilter = (e) => {
     e.preventDefault();
-    console.log(e.currentTarget.value);
     const query = e.currentTarget.value.toLowerCase();
-    const filteredItems = this.state.items.filter(item => {
-      console.log({item});
-      return (item.name.toLowerCase().indexOf(query) > -1 || item.surname.toLowerCase().indexOf(query) > -1
-        || item.username.toLowerCase().indexOf(query) > -1 || item.email.toLowerCase().indexOf(query) > -1)
-    });
-    this.setState({query, filteredItems});
+    this.setState({query});
   };
 
-  handleSearch = (e) => {
-    e.preventDefault();
-    console.log(e.key);
-    if (e.key === 'Enter')
-      return History.push('?search=' + this.state.query);
-  };
+  // handleSearch = (e) => {
+  //   e.preventDefault();
+  //   console.log(e.key);
+  //   if (e.key === 'Enter')
+  //     return this.props.history.push('?search=' + this.state.query);
+  // };
 
   renderItems = () => {
     const {isAdmin, isEditor} = this.props.AuthStore.me;
     const {list} = this.props.UserStore;
-    console.log('data', list, typeof list);
+    const filteredList = [...list.values()].filter(i => (i.first.toLowerCase().indexOf(this.state.query) > -1 || i.last.toLowerCase().indexOf(this.state.query) > -1
+        || i.username.toLowerCase().indexOf(this.state.query) > -1));
     //if (!(status === 'ready')) return false;
     if (!list) return false;
     //const items = this.props.filteredItems || this.props.system.data.users;
-    return [...list.values()].map(item => {
+    return filteredList.map(item => {
       return <div className="col-sm-4" key={item.uid}>
         <div className="card mb-2">
           <div className="card-body p-2">
@@ -99,10 +56,10 @@ class List extends Component {
                     src={item.avatar} alt={item.name}
                     width="100" height="100"/>
             <div className="">
-              <h3 className="h5 card-title">
-                <i className={item.icon}/>&nbsp;&nbsp;{item.name}{item.email}</h3>
-              <p>
-                <small>{item.first}</small>
+              <h3 className="h5 card-title text-truncate">
+                <i className={item.icon}/>&nbsp;&nbsp;{item.name}</h3>
+              <p className="text-truncate">
+                <small>{item.username}</small>
               </p>
               <div className="text-right">
                 {item.uid &&
@@ -130,8 +87,8 @@ class List extends Component {
     return (<React.Fragment>
         <div className="list">
           <div className="searchInput text-right pr-4">
-            <Input type="text" className="form-control-sm" placeholder="Filter or Search..." value={this.state.query}
-                   onKeyUp={this.handleSearch} onChange={this.handleFilter}/>
+            <Input type="text" className="form-control-sm" placeholder="Filter ..." value={this.state.query}
+                   onChange={this.handleFilter}/>
             {/*<small className="text-muted">Total result: {this.props.count}</small>*/}
           </div>
           <div className="row">
@@ -147,9 +104,4 @@ class List extends Component {
   }
 }
 
-//
-// const mapStateToProps = (state) => {
-//   return {system: state.system, me: state.auth.me}
-// };
-
-export default List//connect(mapStateToProps, {fetchList})(List);
+export default List;

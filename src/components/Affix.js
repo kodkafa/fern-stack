@@ -41,7 +41,6 @@ export const Affix = (props = {
       checkPosition(element, distanceToBody);
     };
     if (!scrollEvent) {
-      console.log('scroll event added ');
       window.addEventListener('scroll', handleScroll);
     }
   };

@@ -9,7 +9,6 @@ class UserService {
         .auth()
         .currentUser.getIdToken(true)
         .then(idToken => {
-          console.log({idToken});
           return idToken;
         })
         .catch(e => {
@@ -32,7 +31,6 @@ class UserService {
     };
     const url = APIURL + (id ? "/users/" + id : "/users/?" + params);
     const response = await fetch(url, options);
-    console.log('UserService  GET', {response});
     const result = await response.json();
     if (response.status === 200) {
       return result;
@@ -73,6 +71,19 @@ class UserService {
       headers
     };
     const request = new Request(APIURL + "/" + id, options);
+    return await fetch(request);
+  };
+
+
+  toggleClaim = async (id, model) => {
+    const token = await this.getToken();
+    const options = {
+      method: "PUT",
+      mode: 'cors',
+      headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+      body: JSON.stringify(model)
+    };
+    const request = new Request(APIURL + "/users/" + id + "/toggleClaim", options);
     return await fetch(request);
   };
 

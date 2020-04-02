@@ -22,7 +22,7 @@ export class ToggleButton extends React.Component {
         this.setState({
             loading: true
         });
-        this.props.toggleFunction()
+        this.props.toggleFunction(e)
             // .then(response => {
             //     console.log('toggleFunction', this.state.textActive);
             //     // this.setState({
@@ -31,13 +31,6 @@ export class ToggleButton extends React.Component {
             //     // });
             // })
     };
-
-    // componentDidUpdate = (props) => {
-    //     this.setState({
-    //         status: props.status,
-    //         loading: false
-    //     });
-    // };
 
     render() {
         //console.log('status', this.state.status, this.props.toggleFunction);

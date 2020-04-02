@@ -10,7 +10,6 @@ export class UserModel {
   @observable customClaims;
 
   constructor(data) {
-    console.log('user model constructor', data);
     this.uid = data.uid;
     this.username = data.hasOwnProperty('username') ? data.username : data.uid;
     this.first = data.first || '';
@@ -20,26 +19,36 @@ export class UserModel {
     this.avatar = data.avatar || null;
     this.cover = data.cover || null;
     this.customClaims = data.customClaims || {};
-    this.icon = this.isAdmin() ? 'fas fa-user-astronaut'
-      : this.isEditor() ? 'fa fa-user-secret'
-        : this.isManager() || this.isWorker() ? 'fa fa-user-tie' : 'fa fa-user';
+    this.icon = this.isAdmin ? 'fas fa-user-astronaut'
+      : this.isEditor ? 'fa fa-user-graduate'
+        : this.isManager ? 'fa fa-user-secret'
+          : this.isWorker ? 'fa fa-user-tie' : 'fa fa-user';
     this.disabled = data.disabled;
   }
 
-  isAdmin = () => {
+  @computed
+  get isAdmin() {
     return 'admin' in this.customClaims && this.customClaims.admin
   };
 
-  isEditor = () => {
+  @computed
+  get isEditor() {
     return 'editor' in this.customClaims && this.customClaims.editor
   };
 
-  isManager = () => {
+  @computed
+  get isManager() {
     return 'manager' in this.customClaims && this.customClaims.manager
   };
 
-  isWorker = () => {
+  @computed
+  get isWorker() {
     return 'worker' in this.customClaims && this.customClaims.worker
+  };
+
+  @computed
+  get isUser() {
+    return !this.disabled
   };
 
   get id() {
@@ -79,44 +88,61 @@ export class UserModel {
   changeUsername = async (username) => {
     try {
       const {uid} = stores.AuthStore.me;
-
-      console.log({username})
-
       const isOK = await firebase.firestore()
         .collection('usernames')
         .doc(username)
         .set({uid})
-        .then(r => true)
-        .catch(error => stores.SystemMessageStore.handleError({
-          code: "CLAIMED_USERNAME",
-          message: "The username has already been claimed. Please, select a different one."
-        }));
-
-      console.log({isOK});
+        .then(() => true);
 
       if (isOK) {
-
         await firebase.firestore()
           .collection('users')
           .doc(uid)
           .update({username})
-          .then()
-          .catch(error => stores.SystemMessageStore.handleError(error));
+          .then();
 
         await firebase.firestore()
           .collection('usernames')
           .doc(this.username)
           .delete()
-          .then(r => null).catch(e => null);
+          .then(() => null);
 
         if (uid === stores.AuthStore.me.uid)
           await stores.AuthStore.getUserData({uid});
       }
     } catch (error) {
-      stores.SystemMessageStore.handleError(error)
+      // custom error message for user friendly message
+      return stores.SystemMessageStore.handleError({
+        code: "CLAIMED_USERNAME",
+        message: "The username has already been claimed. Please, select a different one."
+      })
     }
+    return true;
   };
 
+
+  toggleClaim = async (type) => {
+    try {
+
+      const data = type === 'admin' ? {
+          admin: !this.isAdmin
+        }
+        : type === 'editor' ? {
+            editor: !this.isEditor
+          }
+          : type === 'manager' ? {
+              manager: !this.isManager
+            }
+            : type === 'worker' ? {
+                worker: !this.isWorker
+              }
+              : {disable: this.isUser};
+
+      await stores.UserStore.service.toggleClaim(this.uid, data);
+    } catch (error) {
+      console.log(error)
+    }
+  };
   toggleAdmin = async () => {
     try {
       await stores.UserStore.service.toggleAdmin(this.uid, {admin: !this.isAdmin()})

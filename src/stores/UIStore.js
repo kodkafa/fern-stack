@@ -1,8 +1,8 @@
 import {action, observable} from 'mobx';
 
 export default class {
-  @observable height = window.innerHeight;
-  @observable width = window.innerWidth;
+  @observable height = Math.max(document.body.scrollHeight, window.innerHeight);
+  @observable width = Math.max(document.body.scrollWidth, window.innerWidth);
   @action setHeight = height => (this.height = height);
   @action setWidth = width => (this.width = width);
 

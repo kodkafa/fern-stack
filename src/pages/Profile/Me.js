@@ -37,7 +37,6 @@ class Profile extends Component {
       this.setState({image: e.target.files[0], avatarModal: true});
     }
     if (e.target.id === 'cover') {
-      console.log('cover');
       const width = document.getElementById('cover-figure').offsetWidth;
       const height = width * .25;
       this.setState({cover: e.target.files[0], width, height});
@@ -51,28 +50,19 @@ class Profile extends Component {
   setEditorRef = (editor) => this.editor = editor;
 
   handleScaleChange = (e) => {
-    console.log('handleScaleChange', e.target.value);
     this.setState({scale: e.target.value})
-    //this.editor.scale = e.val();
   };
 
   uploadAvatar = async () => {
     if (this.editor) {
-
-      // const canvas = this.editor.getImage().toDataURL();
-      // const image = await fetch(canvas)
-      //   .then(res => res.blob());
-
       const canvas = this.editor.getImageScaledToCanvas().toDataURL();
       const image = await fetch(canvas)
         .then(res => res.blob());
-
       this.props.UserStore.uploadAvatar(image, () => {
       }, () => {
       }, () => {
         this.toggleAvatarModal()
       });
-      console.log({image});
     }
   };
 
@@ -106,7 +96,6 @@ class Profile extends Component {
 
   render() {
     const user = this.props.AuthStore.me;
-    console.log({user});
     if (user === null) return <section className="container">
       <div className="profile">Loading...</div>
     </section>;
@@ -127,10 +116,10 @@ class Profile extends Component {
             </button>
           </div>
           <ImageViewer className="img-fluid"
-                     width={this.state.width}
-                     height={this.state.height}
-                     src={user.cover}
-                     alt={user.fullname}/>
+                       width={this.state.width}
+                       height={this.state.height}
+                       src={user.cover}
+                       alt={user.fullname}/>
           {this.state.cover
             ? <div className="editor">
               <AvatarEditor
@@ -151,10 +140,10 @@ class Profile extends Component {
           }
           <figure className={this.state.isUploadingProfile ? 'avatar uploading' : 'avatar'}>
             <ImageViewer className="img-thumbnail"
-                       width={120}
-                       height={120}
-                       src={user.avatar}
-                       alt={user.fullname}/>
+                         width={120}
+                         height={120}
+                         src={user.avatar}
+                         alt={user.fullname}/>
             <div className="image-input-container">
               <input type="file" id="avatar" name="image" onChange={this.handleFileChange}/>
             </div>

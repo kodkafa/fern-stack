@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import {inject, observer} from "mobx-react";
 import {autorun} from "mobx";
 import DatePicker from "react-datepicker";
+import {Loader} from "../../components";
 
 const FormikForm = ({
                       values,
@@ -56,6 +57,7 @@ const FormikForm = ({
 class EnhancedForm extends Component {
   constructor(props) {
     super(props);
+
     autorun(() => {
       this.props.UserStore.getUserById(props.match.params.id);
     });
@@ -64,8 +66,6 @@ class EnhancedForm extends Component {
       id: props.match.params.id,
       user: {
         id: props.match.params.id,
-        // username: '',
-        // email: '',
         first: '',
         last: '',
         born: '',
@@ -74,17 +74,6 @@ class EnhancedForm extends Component {
       }
     }
   }
-
-  // getUserData(id) {
-  //   if (!this.state.user || id !== this.state.user.id)
-  //     getUser(id)
-  //       .then(user => {
-  //         this.setState({user: user})
-  //       })
-  //       .catch(error => {
-  //         this.setState({'error': error})
-  //       })
-  // }
 
   // componentDidMount() {
   //   if (!this.props.me || !this.props.me.isAdmin)
@@ -109,6 +98,7 @@ class EnhancedForm extends Component {
   };
 
   async toggleAdmin(e) {
+    console.log({user});
     const user = this.props.UserStore.list.get(this.state.id);
     console.log({user});
     // return await user.toggleAdmin();
@@ -128,6 +118,7 @@ class EnhancedForm extends Component {
     //   document.getElementById('errorMessage').innerHTML = '<div class="alert alert-danger">' + error + '</div>';
     // }
   }
+
   //
   // async toggleEditor(e) {
   //   let el = e.currentTarget;
@@ -152,8 +143,7 @@ class EnhancedForm extends Component {
     console.log('user', user);
     if (user === undefined)
       return <section className="container">
-        <div className="row justify-content-md-center"><i className="fa fa-circle-notch fa-spin fa-3x"/>
-        </div>
+        <Loader/>
       </section>;
     return (
       <section className="container">
@@ -173,6 +163,7 @@ class EnhancedForm extends Component {
             <hr/>
             <div>
               <div id="errorMessage"/>
+
               <button data-id={user.uid} data-fk={user.isAdmin()}
                       className={user.isAdmin() ? 'btn btn-danger' : 'btn btn-secondary'}
                       onClick={(e) => this.toggleAdmin(e)}>

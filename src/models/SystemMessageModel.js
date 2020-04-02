@@ -5,7 +5,6 @@ export class SystemMessageModel {
   @observable isDisplayed = false;
 
   constructor(data) {
-    console.log('system message model constructor', data);
     this.status = data.status;
     this.code = data.code;
     this.message = data.message;

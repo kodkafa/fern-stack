@@ -37,42 +37,26 @@ export default class {
     // console.log('me', customClaims);
   };
 
-  createUserWithEmailPassword = ({username, first, last, born, email, password}) => {
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-      .then(async data => {
-        const {user} = data;
-        console.log('THEN', user.uid);
-        //this.userSave({user, username, first, last, born})
-        // const usernameIsAvailable = await firebase.database()
-        //   .ref('usernames')
-        //   .child(username)
-        //   .set({
-        //     uid: user.uid
-        //   })
-        //   .then()
-        //   .catch(error => this.stores.SystemMessageStore.handleError({
-        //     code: "UNAVAILABLE USERNAME",
-        //     message: `Sorry, the username "${username}" has already been claimed. Please, select a different one.`
-        //   }));
-        //
-        // if (usernameIsAvailable)
-        await firebase.firestore()
-          .collection('users')
-          .doc(user.uid)
-          .set({
-            username: username || user.uid,
-            first,
-            last,
-            born
-          })
-          .catch(error => this.stores.SystemMessageStore.handleError(error));
-        // else {
-        //   await user.delete().then()
-        //     .catch(error => this.stores.SystemMessageStore.handleError(error));
-        // }
-
-      })
-      .catch(error => this.stores.SystemMessageStore.handleError(error));
+  createUserWithEmailPassword = async ({username, first, last, born, email, password}) => {
+    try {
+      await firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(async data => {
+          const {user} = data;
+          await firebase.firestore()
+            .collection('users')
+            .doc(user.uid)
+            .set({
+              username: username || user.uid,
+              first,
+              last,
+              born
+            })
+            .catch(error => this.stores.SystemMessageStore.handleError(error));
+        })
+    } catch (error) {
+      return this.stores.SystemMessageStore.handleError(error)
+    }
+    return true;
   };
 
   test = () => {
@@ -117,12 +101,16 @@ export default class {
     console.log(ref);
   };
 
-  signIn = async ({email, password}) =>
-    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
-      .then(async () => await firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(async result => await this.getUserData(result.user))
-        .catch(error => this.stores.SystemMessageStore.handleError(error)))
-      .catch(error => this.stores.SystemMessageStore.handleError(error));
+  signIn = async ({email, password}) => {
+    try {
+      await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+        .then(async () => await firebase.auth().signInWithEmailAndPassword(email, password)
+          .then(async result => await this.getUserData(result.user)));
+    } catch (error) {
+      return this.stores.SystemMessageStore.handleError(error);
+    }
+    return true;
+  };
 
 
   handleAuth = () => {
@@ -161,15 +149,29 @@ export default class {
     return user.reauthenticateWithCredential(cred);
   };
 
-  changeUserPassword = (currentPassword, newPassword) => {
-    return this.reAuth(currentPassword).then(() =>
-      firebase.auth().currentUser.updatePassword(newPassword)
-    );
+  changeUserPassword = async ({currentPassword, newPassword}) => {
+    try {
+      await this.reAuth(currentPassword).then(() =>
+        firebase.auth().currentUser.updatePassword(newPassword)
+      );
+    } catch (error) {
+      return this.stores.SystemMessageStore.handleError(error);
+    }
+    return true;
   };
 
   changeDisplayName = displayName => {
     this.displayName = displayName;
     return firebase.auth().currentUser.updateProfile({displayName});
+  };
+
+  reset = async ({email}) => {
+    try {
+      await firebase.auth().sendPasswordResetEmail(email);
+    } catch (error) {
+      return this.stores.SystemMessageStore.handleError(error);
+    }
+    return true;
   };
 
   date = (date) => {
