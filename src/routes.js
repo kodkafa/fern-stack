@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {inject, observer} from 'mobx-react';
 import {Redirect, Route, Switch} from 'react-router-dom';
-import {Loader} from './components/Loader';
+import {Loader} from './components';
 import {LayoutDefault, LayoutGuest, LayoutWelcome} from './layouts';
 import SignUp from './pages/Auth/SignUp';
 import SignIn from './pages/Auth/SignIn';
@@ -14,8 +14,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Me from './pages/Profile/Me';
 import Settings from './pages/Settings';
-import Users from './pages/Users';
-import UserEdit from './pages/Users/Edit';
+import {Users, Edit as UserEdit} from './pages/Users';
 import NoMatch from './pages/NoMatch';
 import TermsOfService from "./pages/StaticPages/TermsOfService";
 import PrivacyPolicy from "./pages/StaticPages/PrivacyPolicy";

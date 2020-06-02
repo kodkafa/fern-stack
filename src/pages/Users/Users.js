@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, Route} from 'react-router-dom';
 import List from "./List";
-import Edit from "./Edit";
+import {Edit} from "./Edit";
 
 const routes = [
     {

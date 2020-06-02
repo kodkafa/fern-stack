@@ -108,6 +108,7 @@ export default class UserStore {
   };
 
   updateUserById = async ({id, first, last, born, bio}) => {
+    console.log({id, first, last, born, bio})
     try {
       const user = this.list.get(id);
       user.first = first;

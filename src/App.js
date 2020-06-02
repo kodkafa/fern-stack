@@ -1,4 +1,4 @@
-import "./firebase/initialize";
+import "./api/firebase/initialize";
 import React from 'react';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Routes from './routes.js';
