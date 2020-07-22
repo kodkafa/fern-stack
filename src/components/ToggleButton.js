@@ -1,50 +1,40 @@
-import React from 'react';
+import React, {useState} from 'react';
 
-export class ToggleButton extends React.Component {
+export const ToggleButton = React.forwardRef((props, ref) => {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            textActive: props.textActive,
-            textPassive: props.textPassive,
-            classActive: props.classActive || 'btn btn-default text-primary',
-            classPassive: props.classPassive || 'btn btn-default',
-            iconActive: props.iconActive || 'fa fa-check',
-            iconPassive: props.iconPassive || 'fa fa-times',
-            iconLoading: props.iconLoading || 'fa fa-circle-notch fa-spin',
-            status: props.status,
-            loading: props.loading
-        }
-    }
+  const {
+    textActive = props.children,
+    textPassive = props.children,
+    classActive = 'btn btn-default text-primary',
+    classPassive = 'btn btn-default',
+    iconActive = props.icon || 'fa fa-check',
+    iconPassive = props.icon || 'fa fa-times',
+    iconLoading = 'fa fa-circle-notch fa-spin',
+    status,
+  } = props
 
-    onClick = (e) => {
-        e.preventDefault();
-        this.setState({
-            loading: true
-        });
-        this.props.toggleFunction(e)
-            // .then(response => {
-            //     console.log('toggleFunction', this.state.textActive);
-            //     // this.setState({
-            //     //     status: typeof response === 'boolean' ? response : this.state.status,
-            //     //     loading: false
-            //     // });
-            // })
-    };
+  const [loading, setLoading] = useState(false)
 
-    render() {
-        //console.log('status', this.state.status, this.props.toggleFunction);
-        const text = this.state.status ? this.state.textActive : this.state.textPassive;
-        const className = this.state.status ? this.state.classActive : this.state.classPassive;
-        const icon = this.state.loading ? this.state.iconLoading
-            : this.state.status ? this.state.iconActive : this.state.iconPassive;
-        return (
-            <button style={{...this.props.style}}
-                    ref={this.props.forwardref ? this.props.forwardref : null}
-                    className={className + ' ' + this.props.className} onClick={this.onClick}>
-                <i className={icon}/> {text}
-            </button>
-        );
-    }
-}
+  const onClick = async (e) => {
+    e.preventDefault();
+    setLoading(true)
+    await props.toggleFunction(e)
+    setLoading(false)
+  }
+
+  //console.log('status', status, this.props.toggleFunction);
+  const text = status ? textActive : textPassive;
+  const className = status ? classActive : classPassive;
+  const icon = loading ? iconLoading
+    : status ? iconActive : iconPassive;
+  return (
+    <button
+      {...props}
+      style={{...props.style}}
+      ref={ref}
+      className={className + ' ' + props.className} onClick={onClick}>
+      <i className={icon}/> {text}
+    </button>
+  )
+})
 
