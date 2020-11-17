@@ -1,32 +1,34 @@
-import React from 'react';
+import React from 'react'
 import {Footer, Navbar} from './components'
+import './assets/App.scss'
+import 'bootstrap/dist/js/bootstrap.bundle.js'
 
-import './assets/App.scss';
-
-export const LayoutWelcome = (props) =>
+export const LayoutWelcome = props => (
   <React.Fragment>
-    <Navbar className="navbar-light"/>
-    <div className="page" data-spy="scroll" data-target="#navbar" data-offset="0">
+    <Navbar className="navbar-light" />
+    <div className="page" data-target="#navbar" data-offset="0">
       {props.children}
     </div>
-    <Footer/>
-  </React.Fragment>;
+    <Footer />
+  </React.Fragment>
+)
 
-export const LayoutGuest = (props) =>
+export const LayoutGuest = props => (
   <React.Fragment>
-    <Navbar className="navbar-shrinked navbar-light"/>
-    <div className="page" data-spy="scroll" data-target="#navbar" data-offset="0">
+    <Navbar className="navbar-shrinked navbar-light" />
+    <div className="page" data-target="#navbar" data-offset="0">
       {props.children}
     </div>
-    <Footer/>
-  </React.Fragment>;
+    <Footer />
+  </React.Fragment>
+)
 
-export const LayoutDefault = (props) =>
+export const LayoutDefault = props => (
   <React.Fragment>
-    <Navbar className="navbar-shrinked navbar-light"/>
-    <div className="page" data-spy="scroll" data-target="#navbar" data-offset="0">
+    <Navbar className="navbar-shrinked navbar-light" />
+    <div className="page" data-target="#navbar" data-offset="0">
       {props.children}
     </div>
-    <Footer/>
-  </React.Fragment>;
-
+    <Footer />
+  </React.Fragment>
+)

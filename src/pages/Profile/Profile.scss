@@ -31,7 +31,7 @@
       position: absolute;
       right: 1em;
       top: 1em;
-      transition: opacity .1s;
+      transition: opacity 0.1s;
     }
 
     &:hover {
@@ -55,6 +55,10 @@
       position: absolute;
       left: 0;
       top: 0;
+      overflow: hidden;
+      > canvas {
+        margin: -25px;
+      }
     }
 
     .avatar {
@@ -65,7 +69,8 @@
       left: 5%;
       top: 0;
       /*height: calc(width * .25);*/
-      img, svg {
+      img,
+      svg {
         position: absolute;
         left: 0;
         bottom: -15%;
@@ -80,7 +85,7 @@
         width: calc(100% - 10px);
         margin: 5px;
         height: 1px;
-        transition: height .1s;
+        transition: height 0.1s;
         padding: 0;
         border: 0;
         background: none;
@@ -91,7 +96,7 @@
         button {
           visibility: visible;
           height: 40%;
-          background: rgba(0, 0, 0, .4);
+          background: rgba(0, 0, 0, 0.4);
         }
       }
     }
@@ -102,7 +107,7 @@
       left: 22%;
       color: #fff;
       text-rendering: optimizelegibility;
-      text-shadow: 0 0 3px rgba(0, 0, 0, .8);
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
     }
   }
 
@@ -121,4 +126,3 @@
     }
   }
 }
-

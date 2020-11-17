@@ -1,83 +1,69 @@
-import {inject, observer} from "mobx-react";
-import React, {Component} from 'react';
-import {Field, Form, Formik} from 'formik'
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import {inject, observer} from 'mobx-react'
+import React, {useState} from 'react'
+import 'react-datepicker/dist/react-datepicker.css'
 import * as Yup from 'yup'
+import {useTranslation} from 'react-i18next'
+import {Form, Input, Textarea, Submit, DateInput} from 'form'
 
-const FormikForm = ({
-                      values,
-                      touched,
-                      errors,
-                      status,
-                      setFieldValue,
-                      isSubmitting
-                    }) => (
-  <Form className="col-md-6">
-    <div className="row">
-      <fieldset className="col-md-6 form-group">
-        <label>Name</label>
-        <Field className="form-control" type="text" name="first" placeholder="Name"/>
-        {touched.first && errors.first && <small className="form-text text-danger">{errors.first}</small>}
-      </fieldset>
-      <fieldset className="col-md-6 form-group">
-        <label>Surname</label>
-        <Field className="form-control" type="text" name="last" placeholder="Surname"/>
-        {touched.last && errors.last &&
-        <small className="form-text text-danger">{errors.last}</small>}
-      </fieldset>
-    </div>
-    <fieldset className="form-group">
-      <label>Birthday</label>
-      <DatePicker
-        selected={values.born}
-        dateFormat="d MMMM yyyy"
-        className="form-control"
-        name="born"
-        onChange={date => setFieldValue('born', date)}
-      />
-      {touched.born && errors.born && <small className="form-text text-danger">{errors.born}</small>}
-    </fieldset>
-    <fieldset className="form-group">
-      <Field className="form-control" component="textarea" name="bio"
-             placeholder="Write something short about you"/>
-      {touched.bio && errors.bio && <small className="form-text text-danger">{errors.bio}</small>}
-    </fieldset>
-    {status && status.success && <div className="alert alert-success">
-      <small>{status.success}</small>
-    </div>}
-    <button className="btn btn-primary" type="submit" disabled={isSubmitting}>
-      {isSubmitting && <span><i className="fa fa-circle-notch fa-spin"/>&nbsp;</span>}
-      Update my Account
-    </button>
-  </Form>
-);
+export const Account = inject(
+  'AuthStore',
+  'UserStore'
+)(
+  observer(props => {
+    const {t} = useTranslation()
+    const schema = Yup.object().shape({
+      last: Yup.string().required(t('Surname is required')),
+      first: Yup.string().required(t('Name is required')),
+      bio: Yup.string(),
+    })
 
-@inject('AuthStore', 'UserStore')
-@observer
-class EnhancedForm extends Component {
-  handleSubmit = async (values, {setSubmitting, setStatus}) => {
-    setStatus(null);
-    if (await this.props.UserStore.updateMe(values)) {
-      setSubmitting(false);
-      setStatus({'success': 'Your account has been created successfully!'});
+    const {me} = props.AuthStore
+    const defaultValues = {
+      first: me.first,
+      last: me.last,
+      born: me.born,
+      bio: me.bio,
     }
-  };
 
-  render() {
-    const me = this.props.AuthStore.me;
+    const [loading, setLoading] = useState(false)
+
+    const onSubmit = async data => {
+      setLoading(true)
+      await props.UserStore.updateMe(data)
+      setLoading(false)
+    }
+
     return (
-      <div className="row justify-content-md-center">
-        <Formik component={FormikForm}
-                enableReinitialize="true"
-                initialValues={me}
-                validationSchema={Yup.object().shape({
-                  first: Yup.string().required('Name is required'),
-                  last: Yup.string().required('Surname is required'),
-                })}
-                onSubmit={this.handleSubmit}/>
-      </div>)
-  }
-}
-
-export default EnhancedForm
+      <div className="container">
+        <h1 className="h4 lined">
+          <span>{t('ACCOUNT')}</span>
+        </h1>
+        <div className="row  justify-content-md-center">
+          <div className="col-6 my-auto">
+            <div className="row justify-content-md-center">
+              <Form
+                className="border-0 p-4 "
+                schema={schema}
+                defaultValues={defaultValues}
+                onSubmit={onSubmit}>
+                <div className="row mb-1">
+                  <Input label={t('Name')} name="first" className="col" />
+                  <Input label={t('Surname')} name="last" className="col" />
+                </div>
+                <DateInput
+                  label={t('Birthday')}
+                  name="born"
+                  dateFormat="d MMMM yyyy"
+                />
+                <Textarea label={t('Bio')} name="bio" />
+                <Submit loading={loading} className="mt-2">
+                  {t('Save')}
+                </Submit>
+              </Form>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  })
+)

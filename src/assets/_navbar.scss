@@ -16,7 +16,10 @@
     height: 48px;
     background: url(./img/logo-dark.svg) center left no-repeat;
     background-size: contain;
-    img { display: none;}
+
+    img {
+      display: none;
+    }
 
     &.active,
     &:active,
@@ -24,10 +27,11 @@
     &:hover {
       color: darken($black, 10%);
     }
+
     .version {
       position: absolute;
-      top: 2px;
-      right: 0;
+      top: 3px;
+      left: 180px;
       font-size: xx-small;
       color: $gray-500;
     }
@@ -67,7 +71,7 @@
     background-attachment: scroll;
     background-position: top center;
     background-size: cover;
-    box-shadow: 0 0 .5em $gray-300;
+    box-shadow: 0 0 0.5em $gray-300;
 
     .nav-item {
       .nav-link {
@@ -90,11 +94,11 @@
     margin-top: 0;
     border: 0;
     border-radius: 0 0 4px 4px;
-    box-shadow: 0 .5em .5em $gray-300;
+    box-shadow: 0 0.5em 0.5em $gray-300;
   }
 }
 
-@media(min-width: 992px) {
+@media (min-width: 992px) {
   #navbar {
     padding-top: 25px;
     padding-bottom: 25px;
@@ -109,34 +113,46 @@
       .nav-item {
         .nav-link {
           padding: 1.1em 1em !important;
-          color: $white
+          color: $white;
         }
       }
     }
 
-    &.navbar-shrink, &.navbar-shrinked {
+    &.navbar-shrink,
+    &.navbar-shrinked {
       padding-top: 0;
       padding-bottom: 0;
       background-color: $white;
       border-bottom: 0;
-      box-shadow: 0 0 .5em $gray-300;
+      box-shadow: 0 0 0.5em $gray-300;
 
       .navbar-brand {
         width: 160px;
-        height: 32px;
+        height: 62px;
         background: url(./img/logo.svg) center left no-repeat;
 
         .version {
-          top: 1px;
-          }
+          top: 13px;
+          left: 140px;
+        }
       }
 
       .navbar-nav {
         .nav-item {
           .nav-link {
             padding: 1.1em 1em !important;
-            color: $gray-900
+            color: $gray-900;
+            &.active,
+            &:hover {
+              color: $primary;
+            }
           }
+        }
+      }
+
+      .translations {
+        li {
+          color: $gray-900;
         }
       }
     }
@@ -151,6 +167,20 @@
     justify-content: center;
     padding: 1em;
   }
-
 }
 
+.navbar-collapse {
+  position: relative;
+
+  .translations {
+    position: absolute;
+    top: 0;
+    right: 1em;
+    font-size: x-small;
+
+    li {
+      cursor: pointer;
+      color: $white;
+    }
+  }
+}

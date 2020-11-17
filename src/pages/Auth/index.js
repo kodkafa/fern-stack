@@ -1,4 +1,4 @@
-import AuthProvider from './AuthProvider';
-import AuthConsumer from './AuthConsumer';
-
-export {AuthProvider, AuthConsumer};
+export {SignUp} from './SignUp'
+export {SignIn} from './SignIn'
+export {SignOut} from './SignOut'
+export {Reset} from './Reset'

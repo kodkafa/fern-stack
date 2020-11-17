@@ -1,8 +1,10 @@
-html, body {
+html,
+body {
   height: 100%;
 }
 
-#root, .page {
+#root,
+.page {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -103,8 +105,16 @@ section {
 }
 
 .system-messages {
-  animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   animation-iteration-count: 2;
+}
+.close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border: 0;
+  background: transparent;
+  outline: none;
 }
 
 .page-item {
@@ -115,3 +125,8 @@ section {
   }
 }
 
+.nav-link {
+  &.active {
+    color: $black;
+  }
+}

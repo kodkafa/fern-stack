@@ -1,2 +1,1 @@
-export {default as Users} from './Users';
-export {Edit} from './Edit';
+export {Users} from './Users'

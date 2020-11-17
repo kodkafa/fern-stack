@@ -26,7 +26,7 @@ choose "JavaScript" for Cloud Functions \
 say yes for ESLint \
 
 !!! DO NOT overwrite "package.json"\
-!!! DO NOT overwrite "functions/routes.js"
+!!! DO NOT overwrite "functions/Routing.js"
 
 change "public" directory as "build"
 

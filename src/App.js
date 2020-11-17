@@ -1,31 +1,31 @@
-import "./api/firebase/initialize";
-import React from 'react';
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import Routes from './routes.js';
-import {ScrollToTop} from "./components";
-import {I18nextProvider} from 'react-i18next';
-import i18next from 'i18next';
+import './rest/firebase/initialize'
+import React, {useEffect} from 'react'
+import {Routing} from './Routing.js'
+import {I18nextProvider} from 'react-i18next'
+import i18next from './rest/helpers/i18'
+import {Loader} from './components'
+import {inject, observer} from 'mobx-react'
 
-import Home from "./pages/Dashboard/translations-en.json";
+export const App = inject(
+  'UIStore',
+  'AuthStore'
+)(
+  observer(props => {
+    const {authenticated, handleAuth} = props.AuthStore
+    useEffect(() => {
+      if (authenticated === false) {
+        handleAuth()
+      }
+    }, [handleAuth, authenticated])
 
-i18next.init({
-  interpolation: {escapeValue: false},  // React already does escaping
-  lng: 'en',                              // language to use
-  resources: {
-    en: {
-      Home: Home               // 'common' is our custom namespace
-    }
-  },
-});
-
-const App = () =>
-  <I18nextProvider i18n={i18next}>
-    <Router>
-      <ScrollToTop/>
-      <Switch>
-        <Route path="/" component={Routes}/>
-      </Switch>
-    </Router>
-  </I18nextProvider>;
-
-export default App;
+    return (
+      <I18nextProvider i18n={i18next}>
+        {authenticated === null ? (
+          <Loader backgroud={true} height={props.UIStore.height} />
+        ) : (
+          <Routing authenticated={authenticated} />
+        )}
+      </I18nextProvider>
+    )
+  })
+)

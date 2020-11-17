@@ -1,137 +1,198 @@
-import {inject, observer} from "mobx-react";
-import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
-import {HashLink} from 'react-router-hash-link';
-import {SystemMessages} from './SystemMessages';
-import logo from '../assets/img/logo.svg';
-import {computed} from "mobx";
-import {ImageViewer} from './ImageViewer';
-import packageJson from '../../package.json';
+import {inject, observer} from 'mobx-react'
+import React, {useEffect} from 'react'
+import {Link, NavLink} from 'react-router-dom'
+import {HashLink} from 'react-router-hash-link'
+import {SystemMessages} from './SystemMessages'
+import logo from '../assets/img/logo.svg'
+import {ImageViewer} from './ImageViewer'
+import {useTranslation} from 'react-i18next'
+import packageJson from '../../package.json'
 
+// const dropDownToggle = (e) => {
+//   const dd = e.currentTarget;
+//   dd.classList.toggle('show');
+//   dd.querySelector('.dropdown-menu').classList.toggle('show');
+// }
 
-@inject('AuthStore')
-@observer
-class Navbar extends Component {
-
-  @computed get authenticated() {
-    return this.props.AuthStore.authenticated
-  }
-
-  @computed get me() {
-    return this.props.AuthStore.me
-  }
-
-  get isShrink() {
-    return this.props.className.indexOf('navbar-shrinked') > -1
-  }
-
-  static dropDownToggle(e) {
-    const dd = e.currentTarget;
-    dd.classList.toggle('show');
-    dd.querySelector('.dropdown-menu').classList.toggle('show');
-  }
-
-  static Shrink(e, shrink) {
-    const navbar = document.getElementById('navbar');
+const Shrink = (e, shrink) => {
+  const navbar = document.getElementById('navbar')
+  if (navbar)
     if (shrink || window.pageYOffset > 0) {
-      navbar.classList.add("navbar-shrink");
+      navbar.classList.add('navbar-shrink')
     } else {
-      navbar.classList.remove("navbar-shrink");
+      navbar.classList.remove('navbar-shrink')
     }
-  }
+}
 
-  componentDidMount() {
-    if (!this.isShrink) {
-      Navbar.Shrink(null, !!this.me.uid);
-      window.addEventListener('scroll', Navbar.Shrink);
+export const Navbar = inject('AuthStore')(
+  observer(props => {
+    const {i18n} = useTranslation()
+    const {language} = i18n
+
+    const {authenticated, me = {}} = props.AuthStore
+
+    const isShrink = props.className.indexOf('navbar-shrinked') > -1
+
+    useEffect(() => {
+      if (!isShrink) {
+        Shrink(null, !!me.uid)
+        window.addEventListener('scroll', Shrink)
+      }
+    }, [me.uid, isShrink])
+
+    const renderLogo = () => {
+      return (
+        <Link
+          to={me.uid ? '/dashboard' : '/'}
+          className="navbar-brand"
+          key="logo">
+          <img id="logo" src={logo} className="img-fluid" alt="logo" />
+          <span className="version">v{packageJson.version}</span>
+        </Link>
+      )
     }
-  }
-
-
-  renderLogo() {
-    return <Link to={this.me.uid ? "/dashboard" : "/"} className="navbar-brand" key="logo">
-      <img id="logo" src={logo} className="img-fluid" alt="logo"/>
-      <span className="version">v{packageJson.version}</span>
-    </Link>
-  }
-  renderLinks() {
-    const {authenticated, me} = this;
-    if (authenticated) {
-      return <React.Fragment>
-        {me.isWorker &&
-        <li className="nav-item">
-          <Link className="nav-link" to="/works">Works</Link>
-        </li>}
-        {(me.isManager || me.isAdmin) &&
-        <li className="nav-item">
-          <Link className="nav-link" to="/users">Users</Link>
-        </li>}
-      </React.Fragment>
-    } else {
-      return [<li className="nav-item" key="about">
-        <HashLink smooth className="nav-link" to="/#about">About</HashLink>
-      </li>,
-        <li className="nav-item" key="features">
-          <Link className="nav-link" to="/features">Features</Link>
-        </li>];
+    const renderLinks = () => {
+      if (authenticated) {
+        return (
+          <React.Fragment>
+            {me.isUser && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/info">
+                  Info
+                </Link>
+              </li>
+            )}
+            {me.isWorker && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/works">
+                  Works
+                </Link>
+              </li>
+            )}
+            {(me.isManager || me.isAdmin) && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/users">
+                  Users
+                </Link>
+              </li>
+            )}
+          </React.Fragment>
+        )
+      } else {
+        return [
+          <li className="nav-item" key="about">
+            <HashLink smooth className="nav-link" to="/#about">
+              About
+            </HashLink>
+          </li>,
+          <li className="nav-item" key="features">
+            <Link className="nav-link" to="/features">
+              Features
+            </Link>
+          </li>,
+        ]
+      }
     }
-  }
 
-  renderUserMenu() {
-    const {authenticated, me} = this;
-    if (authenticated) {
-      return [
-        <li className="nav-item dropdown" key="userMenu" onClick={Navbar.dropDownToggle}>
-          <span className="nav-link dropdown-toggle" data-toggle="dropdown">
-            <ImageViewer className="navbar-avatar"
-                         src={me.avatar} alt={me.name}/>
-            <i className={me.icon}/> <strong>{me.first}</strong>
-          </span>
-          <div className="dropdown-menu">
-            <Link className="dropdown-item" to="/dashboard">Dashboard</Link>
-            <Link className="dropdown-item" to="/profile">Profile</Link>
-            <Link className="dropdown-item" to="/settings">Settings</Link>
-            <div className="dropdown-divider"/>
-            <Link className="dropdown-item" to="/signout">Log out</Link>
-          </div>
-        </li>
-      ];
-    } else {
-      return [
-        <li className="nav-item" key="signin">
-          <Link className="nav-link" to="/signin">Sign In</Link>
-        </li>,
-        <li className="nav-item" key="signup">
-          <Link className="nav-link" to="/signup">Sign Up</Link>
-        </li>
-      ];
+    const renderUserMenu = () => {
+      if (authenticated) {
+        return [
+          <li className="nav-item dropdown" key="userMenu">
+            <span
+              className="nav-link dropdown-toggle"
+              data-toggle="dropdown"
+              aria-expanded="false"
+              id="userMenu">
+              <ImageViewer
+                className="navbar-avatar"
+                src={me.avatar}
+                alt={me.name}
+              />
+              <i className={me.icon} /> <strong>{me.first}</strong>
+            </span>
+            <div
+              className="dropdown-menu  dropdown-menu-right"
+              aria-labelledby="userMenu">
+              <Link className="dropdown-item" to="/dashboard">
+                Dashboard
+              </Link>
+              <Link className="dropdown-item" to="/profile">
+                Profile
+              </Link>
+              <Link className="dropdown-item" to="/settings">
+                Settings
+              </Link>
+              <div className="dropdown-divider" />
+              <Link className="dropdown-item" to="/signout">
+                Log out
+              </Link>
+            </div>
+          </li>,
+        ]
+      } else {
+        return [
+          <li className="nav-item" key="signin">
+            <NavLink className="nav-link" to="/signin">
+              Sign In
+            </NavLink>
+          </li>,
+          <li className="nav-item" key="signup">
+            <NavLink className="nav-link" to="/signup">
+              Sign Up
+            </NavLink>
+          </li>,
+        ]
+      }
     }
-  }
 
-  render() {
+    const handleLanguage = lang => {
+      i18n.changeLanguage(lang)
+    }
+
     return (
-      <nav id="navbar" className={"navbar navbar-expand-lg fixed-top " + this.props.className}>
+      <nav
+        id="navbar"
+        className={'navbar navbar-expand-lg fixed-top ' + props.className}>
         <div className="container">
-          {this.renderLogo()}
-          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMain"
-                  aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"/>
+          {renderLogo()}
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarMain"
+            aria-controls="navbarMain"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon" />
           </button>
 
           <div className="collapse navbar-collapse" id="navbarMain">
-            <ul className="navbar-nav mr-auto">
-              {this.renderLinks()}
-            </ul>
+            <ul className="navbar-nav mr-auto">{renderLinks()}</ul>
 
-            <ul className="nav navbar-nav navbar-right">
-              {this.renderUserMenu()}
+            <ul className="nav navbar-nav navbar-right">{renderUserMenu()}</ul>
+
+            <ul className="nav small p-0 translations">
+              <li
+                className={
+                  'nav-item small border-right px-1 ' +
+                  (language === 'en-US' && 'text-primary')
+                }
+                onClick={() => handleLanguage('en-US', 'en-US')}>
+                EN-US
+              </li>
+              <li
+                className={
+                  'nav-item small px-1 ' +
+                  (language === 'tr-TR' && 'text-primary')
+                }
+                onClick={() => handleLanguage('tr-TR', 'tr')}>
+                TR
+              </li>
             </ul>
           </div>
         </div>
-        <SystemMessages/>
+        <SystemMessages />
       </nav>
-    );
-  }
-}
-
-export default Navbar
+    )
+  })
+)

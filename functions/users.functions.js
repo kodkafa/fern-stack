@@ -94,4 +94,4 @@ users.put('/:id/toggleClaim', async (req, res) => {
     return res.status(500).end(JSON.stringify(error.errorInfo));
   }
 });
-exports.functions = functions.https.onRequest(users);
+exports.users = functions.https.onRequest(users);

@@ -2,6 +2,7 @@ header.intro {
   display: flex;
   position: relative;
   min-height: 100vh;
+  padding: 100px 0;
   text-align: center;
   color: white;
   background-image: url('../../assets/img/intro-header-bg.jpg');
@@ -9,7 +10,7 @@ header.intro {
   background-attachment: scroll;
   background-position: center center;
   background-size: cover;
-  
+
   .intro-text {
     display: flex;
     flex-direction: column;
@@ -74,14 +75,14 @@ header.intro {
 
         :last-child {
           display: inline-block;
-          padding: 2px 3px
+          padding: 2px 3px;
         }
       }
     }
   }
 }
 
-@media(min-width: 768px) {
+@media (min-width: 768px) {
   header.intro {
     .intro-text {
       .intro-lead-in {
