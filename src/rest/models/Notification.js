@@ -1,6 +1,6 @@
 import {action, makeObservable, observable} from 'mobx'
 
-export class SystemMessage {
+export class Notification {
   constructor(data) {
     this.status = data.status
     this.code = data.code

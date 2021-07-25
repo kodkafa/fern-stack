@@ -1,6 +1,6 @@
-import {firebase} from 'fb/initialize'
+import {firebase} from 'rest/firebase/initialize'
 import {computed, makeObservable, observable} from 'mobx'
-import {stores} from 'stores'
+import {stores} from 'rest/stores'
 
 export class Account {
   constructor(data) {
@@ -37,8 +37,6 @@ export class Account {
       name: computed,
     })
   }
-
-  _born
 
   get born() {
     return this._born instanceof firebase.firestore.Timestamp

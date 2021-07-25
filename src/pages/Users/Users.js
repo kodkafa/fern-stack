@@ -21,7 +21,7 @@ export const Users = () => {
             </ul>
           </div>
         </nav>
-        <main role="main" className="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <main role="main" className="col-md-9 ms-sm-auto col-lg-10 px-4">
           <Routes>
             <Route path="/" element={<List />} />
             <Route path=":id/edit" element={<Edit />} />
@@ -53,7 +53,7 @@ export const Users = () => {
 //     },
 // ];
 //
-// class Users extends React.PureComponent {
+// class Projects extends React.PureComponent {
 //
 //     render() {
 //         return <section className="container">
@@ -71,7 +71,7 @@ export const Users = () => {
 //                         </ul>
 //                     </div>
 //                 </nav>
-//                 <main role="main" className="col-md-9 ml-sm-auto col-lg-10 px-4">
+//                 <main role="main" className="col-md-9 ms-sm-auto col-lg-10 px-4">
 //                     <h1 className="main-heading text-primary lined lined-align-left lined-primary">
 //                         {routes.map((route, index) => (
 //                             <Route
@@ -96,4 +96,4 @@ export const Users = () => {
 //     }
 // }
 //
-// export default Users;
+// export default Projects;

@@ -6,10 +6,7 @@ import i18next from './rest/helpers/i18'
 import {Loader} from './components'
 import {inject, observer} from 'mobx-react'
 
-export const App = inject(
-  'UIStore',
-  'AuthStore'
-)(
+export const App = inject('AuthStore')(
   observer(props => {
     const {authenticated, handleAuth} = props.AuthStore
     useEffect(() => {
@@ -21,7 +18,7 @@ export const App = inject(
     return (
       <I18nextProvider i18n={i18next}>
         {authenticated === null ? (
-          <Loader backgroud={true} height={props.UIStore.height} />
+          <Loader backgroud={true} />
         ) : (
           <Routing authenticated={authenticated} />
         )}

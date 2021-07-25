@@ -1,8 +1,8 @@
 import {inject, observer} from 'mobx-react'
 import React, {useState} from 'react'
 import {useTranslation} from 'react-i18next'
-import {Form, Input, Submit} from 'form'
 import * as Yup from 'yup'
+import {Form, Input, Submit} from 'components/form'
 
 export const Username = inject('AuthStore')(
   observer(props => {

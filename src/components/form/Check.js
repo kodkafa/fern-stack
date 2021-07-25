@@ -5,9 +5,8 @@ export function Check({register, name, label, className, ...rest}) {
     <fieldset className={'form-check ' + className}>
       <label className="form-check-label">
         <input
-          name={name}
+          {...register(name)}
           className="form-check-input"
-          ref={register}
           {...rest}
           type="checkbox"
         />

@@ -1,6 +1,6 @@
 import {action, computed, makeObservable, observable} from 'mobx'
-import {SystemMessage as Model} from 'models'
 import React from 'react'
+import {SystemMessage as Model} from 'rest/models'
 
 export class SystemMessageStore {
   newRelease = false
@@ -22,7 +22,6 @@ export class SystemMessageStore {
     return this.list.filter(i => i.isDisplayed === false)
   }
 
-  @action
   add(doc) {
     const item = new Model(doc)
     const legacy = this.list.filter(i => i.createdAt === doc.createdAt)
@@ -53,7 +52,6 @@ export class SystemMessageStore {
     return true
   }
 
-  @action
   setNewRelease(v, message) {
     this.newRelease = v
     this.add({
@@ -71,7 +69,8 @@ export class SystemMessageStore {
 
   linkify = text => {
     //URLs starting with http://, https://, or ftp://
-    const patternURL = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gim
+    const patternURL =
+      /(\b(https?|ftp):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gim
     //text = text.replace(patternURL, (link) => '<a href="' + link + '" target="_blank">' + this.shortener(link) + '</a>');
     text = text.replace(patternURL, link => (
       <a href={link} target="_blank" rel="noopener noreferrer">

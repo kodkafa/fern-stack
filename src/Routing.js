@@ -1,46 +1,35 @@
 import React from 'react'
 // import {inject, observer} from 'mobx-react'
 import {
-  Navigate,
-  Routes,
-  Route,
   BrowserRouter as Router,
+  Navigate,
+  Route,
+  Routes,
   useLocation,
 } from 'react-router-dom'
 // import {Loader} from './components'
 import {LayoutDefault, LayoutGuest, LayoutWelcome} from 'layouts'
 // import SignUp from './pages/Auth/SignUp'
 import {
-  NoMatch,
-  Welcome,
-  SignUp,
-  SignIn,
-  SignOut,
-  Reset,
-  Dashboard,
-  Me,
-  Settings,
   Account,
-  Username,
   ChangePassword,
-  PrivacyPolicy,
-  TermsOfService,
+  Dashboard,
   Features,
   Info,
+  Me,
+  NoMatch,
+  PrivacyPolicy,
+  Reset,
+  Settings,
+  SignIn,
+  SignOut,
+  SignUp,
+  TermsOfService,
+  Username,
   Users,
+  Posts,
+  Welcome,
 } from 'pages'
-// import SignOut from './pages/Auth/SignOut'
-// import Reset from './pages/Auth/Reset'
-// import NewPassword from './pages/Auth/NewPassword'
-// import Welcome from './pages/Welcome'
-// import Features from './pages/Features'
-// import Dashboard from './pages/Dashboard'
-// import Profile from './pages/Profile'
-// import Me from './pages/Profile/Me'
-// import Settings from './pages/Settings'
-// import {Users, Edit as UserEdit} from './pages/Users'
-// import TermsOfService from "./pages/StaticPages/TermsOfService"
-// import PrivacyPolicy from "./pages/StaticPages/PrivacyPolicy"
 
 const RestrictedRoute = ({
   component: Component,
@@ -127,7 +116,7 @@ export const Routing = props => {
         {/*<RestrictedRoute path="/profile" component={Me} authenticated={authenticated}/>*/}
         {/*<RestrictedRoute path="/settings/:page?" component={Settings} authenticated={authenticated}/>*/}
         {/*<RestrictedRoute path="/users/:id/edit" component={UserEdit} authenticated={authenticated}/>*/}
-        {/*<RestrictedRoute path="/users/:page?/:id?" component={Users} authenticated={authenticated}/>*/}
+        {/*<RestrictedRoute path="/users/:page?/:id?" component={Projects} authenticated={authenticated}/>*/}
 
         {/*<GuestRoute path="/:username" component={Profile} layout={LayoutDefault}/>*/}
         <GuestRoute path="" component={Welcome} layout={LayoutWelcome} />
@@ -172,6 +161,11 @@ export const Routing = props => {
         <RestrictedRoute
           path="users/*"
           component={Users}
+          authenticated={props.authenticated}
+        />
+        <RestrictedRoute
+          path="posts/*"
+          component={Posts}
           authenticated={props.authenticated}
         />
         <Route path="*" element={<NoMatch />} />

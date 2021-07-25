@@ -1,4 +1,5 @@
 import React from 'react'
+import packageJSON from '../../../package.json'
 
 export const Features = () => {
   return (
@@ -211,45 +212,37 @@ export const Features = () => {
             <table className="table table-bordered small">
               <thead>
                 <tr>
-                  <th width="50%">Package</th>
+                  <th width="50%">Dependencies</th>
                   <th className="text-center" width="25%">
                     Version
                   </th>
                 </tr>
               </thead>
               <tbody>
+                {Object.entries(packageJSON.dependencies).map(([p, v]) => (
+                  <tr key={'package-' + p}>
+                    <td>{p}</td>
+                    <td className="text-center">{v}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <table className="table table-bordered small">
+              <thead>
                 <tr>
-                  <td>React</td>
-                  <td className="text-center">17.0.0</td>
+                  <th width="50%">Dev Dependencies</th>
+                  <th className="text-center" width="25%">
+                    Version
+                  </th>
                 </tr>
-                <tr>
-                  <td>Firebase</td>
-                  <td className="text-center">7.18.0</td>
-                </tr>
-                <tr>
-                  <td>Mobx</td>
-                  <td className="text-center">6.0.0</td>
-                </tr>
-                <tr>
-                  <td>React Router</td>
-                  <td className="text-center">6.0.0</td>
-                </tr>
-                <tr>
-                  <td>Bootstrap</td>
-                  <td className="text-center">5.0.0</td>
-                </tr>
-                <tr>
-                  <td>React Hook Form</td>
-                  <td className="text-center">6.5.3</td>
-                </tr>
-                <tr>
-                  <td>Yup</td>
-                  <td className="text-center">0.29.3</td>
-                </tr>
-                <tr>
-                  <td>i18next</td>
-                  <td className="text-center">19.6.3</td>
-                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(packageJSON.devDependencies).map(([p, v]) => (
+                  <tr key={'package-' + p}>
+                    <td>{p}</td>
+                    <td className="text-center">{v}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

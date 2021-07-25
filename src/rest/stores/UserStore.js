@@ -1,14 +1,14 @@
-import {db, firebase} from 'fb/initialize'
+import {db, firebase} from 'rest/firebase/initialize'
 import {action, computed, makeObservable, observable, runInAction} from 'mobx'
-import {UserServices as Services} from 'services'
-import {User as Model} from 'models'
+import {User as Model} from 'rest/models'
 import uuid from 'react-uuid'
 
 export class UserStore {
   isReady = false
   dbListener = null
   user = null
-  data = null
+  data = new Model({})
+  cursor = null
   status = 'initial'
   searchQuery = ''
 
@@ -18,12 +18,13 @@ export class UserStore {
       isReady: observable,
       _list: observable,
       user: observable,
-      data: observable,
+      data: observable.deep,
       status: observable,
       searchQuery: observable,
       list: computed,
+      next: computed,
       read: action,
-      getUsers: action,
+      // getUsers: action,
       getUserById: action,
       getUserByUsername: action,
       handleAdd: action,
@@ -37,45 +38,55 @@ export class UserStore {
     // if (!this.dbListener) {
     //   this.listenToDB()
     // }
-    return this._list
+    return [...this._list.values()]
   }
 
   set list(item) {
     return this._list.set(item)
   }
 
-  read = async () => {
+  get next() {
+    return (this.list[this.list.length - 1] || {}).id
+  }
+
+  read = async ({q = null, limit = 10, order = 'asc', more = false}) => {
     // try {
-    const params = {
-      // pageNumber: this.pageNumber,
-      searchQuery: this.searchQuery,
-      //isAscending: this.isAscending
-      nextPageToken: null,
-    }
-    const urlParams = new URLSearchParams(Object.entries(params))
+
+    //const urlParams = new URLSearchParams(Object.entries(params))
 
     // const data = await firebase.functions().httpsCallable('users/', {method:"GET"})({params: {nextPageToken: null}})
     // this.data = data
     // console.log('function call users', this.data)
 
-    const ref = db
+    let ref = db
       .collection('users')
-      .orderBy('username', 'asc')
-      //.orderBy("last", "asc")
-      .startAfter('rjkYw1I2lNgSkeUVSEIjZhj0AcT2')
-      .limit(8)
+      // .orderBy('username', order)
+      .orderBy('first', order)
+      .orderBy('last', order)
+
+    // search
+    //if (q)
+    // ref = ref.where('username', '>=', q).where('username', '<=', q + '\uf8ff')
+    if (q) ref.where('first', '>=', q).where('first', '<=', q + '\uf8ff')
+    //pagination (cursor query)
+    if (more && this.cursor) {
+      console.log({more, cursor: this.cursor})
+
+      ref = ref.startAfter(this.cursor)
+    }
+    ref = ref.limit(limit)
     const snapshot = await ref.get() //.where('capital', '==', true).get();
     if (snapshot.empty) {
       console.log('No matching documents.')
-      throw new Error("'No matching documents.'")
+      //throw new Error("'No matching documents.'")
     }
 
     snapshot.forEach(doc => {
-      // console.log(doc.id, '=>', doc.data());
+      console.log(doc.id)
       this._list.set(doc.id, new Model({id: doc.id, ...doc.data()}))
     })
-    const lastVisible = snapshot.docs[snapshot.docs.length - 1]
-    console.log('last', lastVisible)
+    this.cursor = snapshot.docs[snapshot.docs.length - 1]
+    // console.log('last', lastVisible)
 
     // console.log('read')
     // this.data = await Services.get(urlParams)
@@ -88,40 +99,40 @@ export class UserStore {
     // }
   }
 
-  getUsers = async () => {
-    try {
-      const params = {
-        // pageNumber: this.pageNumber,
-        searchQuery: this.searchQuery,
-        //isAscending: this.isAscending
-        nextPageToken: null,
-      }
-      const urlParams = new URLSearchParams(Object.entries(params))
+  // getUsers = async () => {
+  //   try {
+  //     const params = {
+  //       // pageNumber: this.pageNumber,
+  //       searchQuery: this.searchQuery,
+  //       //isAscending: this.isAscending
+  //       nextPageToken: null,
+  //     }
+  //     const urlParams = new URLSearchParams(Object.entries(params))
+  //
+  //     // const data = await firebase.functions().httpsCallable('users/', {method:"GET"})({params: {nextPageToken: null}})
+  //     // this.data = data
+  //     // console.log('function call users', this.data)
+  //     this.data = await Services.get(urlParams)
+  //     this.data.map(item => new Model(item))
+  //     this.status = 'ready'
+  //   } catch (error) {
+  //     this.status = 'error'
+  //     console.error(error)
+  //   }
+  // }
 
-      // const data = await firebase.functions().httpsCallable('users/', {method:"GET"})({params: {nextPageToken: null}})
-      // this.data = data
-      // console.log('function call users', this.data)
-      this.data = await Services.get(urlParams)
-      this.data.map(item => new Model(item))
-      this.status = 'ready'
-    } catch (error) {
-      this.status = 'error'
-      console.error(error)
-    }
-  }
-
-  getUserById = async uid => {
-    const item = this._list.get(uid)
-    if (item) return item
+  getUserById = async id => {
+    // this.data = this._list.get(id)
+    // if (this.data) return this.data
     try {
-      const user = firebase
+      const user = await firebase
         .firestore()
         .collection('users')
-        .doc(uid)
+        .doc(id)
         .get()
-        .then()
+        .then(doc => doc.exists && {id: doc.id, ...doc.data()})
         .catch(error => this.stores.SystemMessageStore.handleError(error))
-      this.data = new Model(user)
+      this._list.set(id, new Model(user))
       this.status = 'ready'
     } catch (error) {
       this.status = 'error'
@@ -165,13 +176,24 @@ export class UserStore {
   updateUserById = async ({id, first, last, born, bio}) => {
     console.log({id, first, last, born, bio})
     try {
-      const user = this.list.get(id)
+      const user = this._list.get(id)
       user.first = first
       user.last = last
       user.born = born
       user.bio = bio
       user.save()
       this.status = 'ready'
+    } catch (error) {
+      this.status = 'error'
+      console.error(error)
+    }
+  }
+
+  toggleClaimById = async ({id, position}) => {
+    console.log({id, position})
+    try {
+      const user = this._list.get(id)
+      await user.toggleClaim(position)
     } catch (error) {
       this.status = 'error'
       console.error(error)

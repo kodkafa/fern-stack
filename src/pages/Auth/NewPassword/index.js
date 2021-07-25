@@ -1,1 +1,1 @@
-export { default } from './NewPassword';
+export {default} from './NewPassword'

@@ -1,57 +1,64 @@
 {
-  "name": "firebase-react",
+  "name": "fern-stack",
   "version": "1.1.2",
-  "private": true,
+  "license": "MIT",
   "dependencies": {
-    "@babel/plugin-proposal-decorators": "^7.10.5",
-    "@hookform/resolvers": "^0.1.1",
-    "axios": "^0.20.0",
-    "bootstrap": "^5.0.0-alpha2",
-    "bootstrap-icons": "^1.0.0",
-    "customize-cra": "^1.0.0",
-    "firebase": "^7.24.0",
-    "form-serialize": "^0.7.2",
+    "@hookform/error-message": "^2.0.0",
+    "@hookform/resolvers": "^2.6.0",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "bootstrap": "5.0.2",
+    "bootstrap-icons": "^1.5.0",
+    "firebase": "^8.7.0",
     "history": "^5.0.0",
-    "i18next": "^19.7.0",
-    "mobx": "^6.0.1",
-    "mobx-react": "^6.3.1",
-    "moment": "^2.27.0",
-    "node-sass": "^4.14.1",
+    "i18next": "^20.3.2",
+    "mobx": "^6.3.2",
+    "mobx-react": "^7.2.0",
+    "moment": "^2.29.1",
+    "node-sass": "^6.0.1",
     "nprogress": "^0.2.0",
     "prop-types": "^15.7.2",
-    "qs": "^6.9.4",
-    "query-string": "^6.13.1",
-    "react": "^17.0.0-rc.3",
-    "react-app-rewired": "^2.1.6",
+    "qs": "^6.10.1",
+    "react": "^17.0.2",
     "react-avatar-editor": "^12.0.0-beta.0",
-    "react-datepicker": "^2.16.0",
-    "react-dom": "^17.0.0-rc.2",
-    "react-hook-form": "^6.8.4",
-    "react-i18next": "^11.7.0",
-    "react-number-format": "^4.3.0",
-    "react-router": "^6.0.0-beta.0",
+    "react-datepicker": "^4.1.1",
+    "react-dom": "^17.0.2",
+    "react-hook-form": "^7.10.0",
+    "react-i18next": "^11.11.0",
+    "react-mde": "^11.5.0",
+    "react-number-format": "^4.6.3",
+    "react-router": "6.0.0-beta.0",
     "react-router-dom": "^6.0.0-beta.0",
-    "react-router-hash-link": "^2.1.0",
-    "react-scripts": "^4.0.0-next.98",
+    "react-router-hash-link": "^2.4.0",
+    "react-scripts": "^4.0.3",
     "react-uuid": "^1.0.2",
-    "use-deep-compare-effect": "^1.4.0",
-    "yup": "^0.29.3"
+    "showdown": "^1.9.1",
+    "use-deep-compare-effect": "^1.6.1",
+    "web-vitals": "^1.0.1",
+    "yup": "^0.32.9"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "start:functions": "export GOOGLE_APPLICATION_CREDENTIALS=../firebase-config.json && firebase emulators:start  --only functions",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test --env=jsdom",
+    "start": "react-scripts start",
+    "start:functions": "firebase emulators:start --only functions",
+    "start:firebase": "firebase emulators:start",
+    "dev": "concurrently  \"yarn start\" \"yarn start:firebase\"",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
     "patch": "yarn version --patch && git push",
     "minor": "yarn version --minor && git push",
     "major": "yarn version --major && git push",
     "merge": "git push origin dev:master",
     "deploy": "yarn build && firebase deploy --only=hosting",
     "deploy:functions": "yarn build && firebase deploy --only=functions",
-    "deploy:all": "yarn build && firebase deploy"
+    "deploy:all": "yarn build && firebase deploy",
+    "prepare": "husky install"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
@@ -66,17 +73,11 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.10.4",
-    "@babel/plugin-proposal-decorators": "^7.10.5",
-    "husky": "^4.3.0",
-    "lint-staged": "^10.4.0",
-    "prettier": "^2.1.2",
-    "source-map-explorer": "^2.5.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "concurrently": "^6.2.0",
+    "husky": "^7.0.1",
+    "lint-staged": "^11.1.1",
+    "prettier": "^2.3.2",
+    "source-map-explorer": "^2.5.2"
   },
   "prettier": {
     "trailingComma": "es5",

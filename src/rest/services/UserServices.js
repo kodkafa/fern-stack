@@ -1,4 +1,4 @@
-import {firebase, APIURL} from 'fb/initialize'
+import {APIURL, firebase} from 'rest/firebase/initialize'
 
 export class Services {
   static getToken = async () => {
@@ -93,7 +93,7 @@ export class Services {
       APIURL + '/users/' + id + '/toggleClaim',
       options
     )
-    return await fetch(request)
+    return await fetch(request).then(res => res.json())
   }
 
   static toggleAdmin = async (id, model) => {

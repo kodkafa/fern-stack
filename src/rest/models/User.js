@@ -1,10 +1,11 @@
-import {firebase} from 'fb/initialize'
+import {firebase} from 'rest/firebase/initialize'
 import {computed, makeObservable, observable} from 'mobx'
-import {stores} from 'stores'
+import {stores} from 'rest/stores'
+import {UserServices as Service} from 'rest/services'
 
 export class User {
   constructor(data) {
-    this.id = data.id
+    this.id = data.id || data.uid
     this.username = data.hasOwnProperty('username') ? data.username : data.uid
     this.first = data.first || ''
     this.last = data.last || ''
@@ -74,17 +75,17 @@ export class User {
 
   save = async () => {
     try {
-      const {uid, first, last, born, bio, avatar, cover} = this
+      const {id, first, last, born, bio, avatar, cover} = this
       await firebase
         .firestore()
         .collection('users')
-        .doc(uid)
+        .doc(id)
         .update({first, last, born, bio, avatar, cover})
         .then()
         .catch(error => stores.SystemMessageStore.handleError(error))
       //await this.service.put(uid, {first, last, born, bio});
-      if (uid === stores.AuthStore.me.uid)
-        await stores.AuthStore.getUserData({uid})
+      if (id === stores.AuthStore.me.uid)
+        await stores.AuthStore.getUserData({id})
     } catch (error) {
       stores.SystemMessageStore.handleError(error)
     }
@@ -150,14 +151,15 @@ export class User {
             }
           : {disable: this.isUser}
 
-      await stores.UserStore.service.toggleClaim(this.uid, data)
+      const res = await Service.toggleClaim(this.id, data)
+      this.customClaims = res.customClaims || {}
     } catch (error) {
       console.log(error)
     }
   }
   toggleAdmin = async () => {
     try {
-      await stores.UserStore.service.toggleAdmin(this.uid, {
+      await Service.toggleAdmin(this.id, {
         admin: !this.isAdmin(),
       })
     } catch (error) {
@@ -167,7 +169,7 @@ export class User {
 
   toggleEditor = async () => {
     try {
-      await stores.UserStore.service.toggleEditor(this.uid, {
+      await Service.toggleEditor(this.id, {
         editor: !this.isEditor(),
       })
     } catch (error) {

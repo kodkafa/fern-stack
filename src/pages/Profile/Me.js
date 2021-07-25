@@ -1,11 +1,9 @@
 import {inject, observer} from 'mobx-react'
 import {autorun} from 'mobx'
 import React, {useEffect, useRef, useState} from 'react'
-import {ImageViewer} from '../../components'
+import {ImageViewer, Modal} from '../../components'
 import AvatarEditor from 'react-avatar-editor'
 import {Link, useParams} from 'react-router-dom'
-
-import {Modal} from '../../components'
 
 const handleBrowseFile = e => {
   e.stopPropagation()
@@ -63,16 +61,21 @@ export const Me = inject(
     const uploadAvatar = async () => {
       if (avatarEditor) {
         const canvas = avatarEditor.current.getImageScaledToCanvas().toDataURL()
-        const image = await fetch(canvas).then(res => res.blob())
-        await props.UserStore.uploadAvatar({
-          image,
-          progress: i => {
-            console.log({i})
-            setAvatarProgress(i)
-          },
-          error: err => console.log({err}),
-          complete: () => setShowModal(false),
-        })
+        try {
+          const image = await fetch(canvas).then(res => res.blob())
+
+          await props.UserStore.uploadAvatar({
+            image,
+            progress: i => {
+              console.log({i})
+              setAvatarProgress(i)
+            },
+            error: err => console.log({err}),
+            complete: () => setShowModal(false),
+          })
+        } catch (e) {
+          console.log(e)
+        }
       }
     }
 
@@ -131,7 +134,7 @@ export const Me = inject(
                 Edit Profile
               </Link>
               <button
-                className="btn btn-primary ml-1"
+                className="btn btn-primary ms-1"
                 data-input="cover"
                 onClick={!cover ? handleBrowseFile : () => null}>
                 Change Cover
@@ -156,7 +159,7 @@ export const Me = inject(
                   <button className="btn btn-primary" onClick={uploadCover}>
                     Save
                   </button>
-                  <button className="btn btn-danger ml-1" onClick={cancelCover}>
+                  <button className="btn btn-danger ms-1" onClick={cancelCover}>
                     Cancel
                   </button>
                 </div>

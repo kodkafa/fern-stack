@@ -6,7 +6,7 @@ import {SystemMessages} from './SystemMessages'
 import logo from '../assets/img/logo.svg'
 import {ImageViewer} from './ImageViewer'
 import {useTranslation} from 'react-i18next'
-import packageJson from '../../package.json'
+import packageJSON from '../../package.json'
 
 // const dropDownToggle = (e) => {
 //   const dd = e.currentTarget;
@@ -47,7 +47,7 @@ export const Navbar = inject('AuthStore')(
           className="navbar-brand"
           key="logo">
           <img id="logo" src={logo} className="img-fluid" alt="logo" />
-          <span className="version">v{packageJson.version}</span>
+          <span className="version">v{packageJSON.version}</span>
         </Link>
       )
     }
@@ -57,8 +57,8 @@ export const Navbar = inject('AuthStore')(
           <React.Fragment>
             {me.isUser && (
               <li className="nav-item">
-                <Link className="nav-link" to="/info">
-                  Info
+                <Link className="nav-link" to="/features">
+                  Features
                 </Link>
               </li>
             )}
@@ -100,9 +100,10 @@ export const Navbar = inject('AuthStore')(
           <li className="nav-item dropdown" key="userMenu">
             <span
               className="nav-link dropdown-toggle"
-              data-toggle="dropdown"
-              aria-expanded="false"
-              id="userMenu">
+              id="userMenu"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
               <ImageViewer
                 className="navbar-avatar"
                 src={me.avatar}
@@ -153,23 +154,25 @@ export const Navbar = inject('AuthStore')(
       <nav
         id="navbar"
         className={'navbar navbar-expand-lg fixed-top ' + props.className}>
-        <div className="container">
+        <div className="container-fluid">
           {renderLogo()}
           <button
             className="navbar-toggler"
             type="button"
-            data-toggle="collapse"
-            data-target="#navbarMain"
-            aria-controls="navbarMain"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarMain"
+            aria-controls="navbarSupportedContent"
             aria-expanded="false"
             aria-label="Toggle navigation">
             <span className="navbar-toggler-icon" />
           </button>
 
-          <div className="collapse navbar-collapse" id="navbarMain">
-            <ul className="navbar-nav mr-auto">{renderLinks()}</ul>
+          <div
+            className="collapse navbar-collapse container-fluid pe-0"
+            id="navbarMain">
+            <ul className="navbar-nav me-auto">{renderLinks()}</ul>
 
-            <ul className="nav navbar-nav navbar-right">{renderUserMenu()}</ul>
+            <ul className="nav navbar-nav">{renderUserMenu()}</ul>
 
             <ul className="nav small p-0 translations">
               <li

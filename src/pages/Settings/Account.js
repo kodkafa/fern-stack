@@ -1,9 +1,9 @@
 import {inject, observer} from 'mobx-react'
 import React, {useState} from 'react'
+import {useTranslation} from 'react-i18next'
 import 'react-datepicker/dist/react-datepicker.css'
 import * as Yup from 'yup'
-import {useTranslation} from 'react-i18next'
-import {Form, Input, Textarea, Submit, DateInput} from 'form'
+import {DateInput, Form, Input, Submit, Textarea} from 'components/form'
 
 export const Account = inject(
   'AuthStore',

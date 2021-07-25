@@ -8,17 +8,19 @@ export const Item = inject('AuthStore')(
     const {id, data} = props
     const {isAdmin, isEditor} = props.AuthStore.me
     return (
-      <div className="col-sm-4" id={id}>
-        <div className="card mb-2">
-          <div className="card-body p-2">
+      <div className="card" id={id}>
+        <div className="row g-0">
+          <div className="col-4">
             <Avatar
-              className="img-thumbnail rounded-circle float-left mr-2"
+              className="img-thumbnail rounded-circle m-1"
               src={data.avatar}
               alt={data.name}
               width="100"
               height="100"
             />
-            <div className="">
+          </div>
+          <div className="col-8">
+            <div className="card-body">
               <h3 className="h5 card-title text-truncate">
                 <i className={data.icon} />
                 &nbsp;&nbsp;{data.name}
@@ -29,15 +31,15 @@ export const Item = inject('AuthStore')(
               <div className="text-right">
                 {data.uid && (
                   <Link
-                    to={'/' + (data.username || data.uid)}
+                    to={'/' + (data.username || id)}
                     className="btn btn-sm btn-primary">
                     PROFILE
                   </Link>
                 )}
                 {(isAdmin || isEditor) && (
                   <Link
-                    to={'/users/' + data.uid + '/edit'}
-                    className="btn btn-sm btn-success ml-1">
+                    to={'/users/' + id + '/edit'}
+                    className="btn btn-sm btn-success ms-1">
                     EDIT
                   </Link>
                 )}

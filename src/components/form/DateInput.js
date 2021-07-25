@@ -8,25 +8,26 @@ export function DateInput({
   className,
   placeholder,
   dateFormat = 'd MMMM yyyy',
-  ...rest
 }) {
-  const {control, errors} = useFormContext()
+  const {
+    control,
+    formState: {errors},
+  } = useFormContext()
   return (
     <fieldset className={className}>
       {label && <label className="small">{label}</label>}
       <Controller
         control={control}
-        render={({onChange, onBlur, value, dateFormat, ...rest}) => (
+        name={name}
+        render={({field: {onChange, value}}) => (
           <DatePicker
-            {...rest}
-            onChange={onChange}
-            onBlur={onBlur}
+            onChange={e => onChange(e)}
             selected={value}
             className="form-control"
             dateFormat={dateFormat}
+            placeholder={placeholder}
           />
         )}
-        name={name}
       />
       {errors && errors[name] && (
         <small className="form-text text-danger small">

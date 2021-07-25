@@ -1,12 +1,19 @@
-import {autorun} from 'mobx'
 import {inject, observer} from 'mobx-react'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useLocation, useParams} from 'react-router-dom'
 import moment from 'moment'
-import qs from 'query-string'
-import {Input, Submit, Textarea, DateInput, ToggleButton, Form} from 'form'
+import qs from 'qs'
+import {
+  DateInput,
+  Form,
+  Input,
+  Submit,
+  Textarea,
+  ToggleButton,
+} from 'components/form'
 import * as Yup from 'yup'
+// import {User} from "rest/models";
 
 export const Edit = inject(
   'AuthStore',
@@ -36,22 +43,18 @@ export const Edit = inject(
     const params = {...useParams(), ...qs.parse(location.search)} // !IMPORTANT for deps
     const {id} = params
 
-    autorun(() => {
-      props.UserStore.getUserById(id)
-    })
+    const {_list, getUserById, updateUserById, toggleClaimById} =
+      props.UserStore
+    useEffect(() => {
+      getUserById(id).then()
+    }, [id, getUserById])
 
-    const item = props.UserStore.list.get(id)
-    const defaultValues = {
-      first: item.first,
-      last: item.last,
-      born: item.born,
-      bio: item.bio,
-    }
-    //console.log(item.born, new Date())
+    const item = _list.get(id) || {}
+    console.log({_list})
 
     const onSubmit = async data => {
       setLoading(true)
-      await props.UserStore.updateUserById({id, ...data})
+      await updateUserById({id, ...data})
       setLoading(false)
     }
 
@@ -62,7 +65,7 @@ export const Edit = inject(
       el.disabled = true
       el.getElementsByTagName('i')[0].className = 'fa fa-circle-notch fa-spin'
       try {
-        await item.toggleClaim(position)
+        await toggleClaimById({id, position})
         el.disabled = false
         el.getElementsByTagName('i')[0].className = defaultClass
       } catch (error) {
@@ -74,7 +77,7 @@ export const Edit = inject(
 
     return (
       <section className="container">
-        {item === undefined ? (
+        {!item.id ? (
           <div className="row justify-content-md-center">
             <i className="fa fa-circle-notch fa-spin fa-3x" />
           </div>
@@ -84,7 +87,7 @@ export const Edit = inject(
               <Form
                 className="border-0 p-4 "
                 schema={schema}
-                defaultValues={defaultValues}
+                defaultValues={{born: new Date(item.born), ...item}}
                 onSubmit={onSubmit}>
                 <div className="row mb-1">
                   <Input label={t('Name')} name="first" className="col" />
@@ -118,7 +121,7 @@ export const Edit = inject(
                     icon="fa fa-user-graduate"
                     data-position="editor"
                     status={item.isEditor}
-                    className="btn ml-1"
+                    className="btn ms-1"
                     classActive="btn-success"
                     classPassive="border"
                     toggleFunction={toggleClaim}>
@@ -129,7 +132,7 @@ export const Edit = inject(
                     icon="fa fa-user-secret"
                     data-position="manager"
                     status={item.isManager}
-                    className="btn ml-1"
+                    className="btn ms-1"
                     classActive="btn-success"
                     classPassive="border"
                     toggleFunction={toggleClaim}>
@@ -140,7 +143,7 @@ export const Edit = inject(
                     icon="fa fa-user-tie"
                     data-position="worker"
                     status={item.isWorker}
-                    className="btn ml-1"
+                    className="btn ms-1"
                     classActive="btn-success"
                     classPassive="border"
                     toggleFunction={toggleClaim}>
@@ -151,7 +154,7 @@ export const Edit = inject(
                     icon="fa fa-user-check"
                     data-position="user"
                     status={item.isUser}
-                    className="btn ml-1"
+                    className="btn ms-1"
                     classActive="btn-success"
                     classPassive="border"
                     toggleFunction={toggleClaim}>

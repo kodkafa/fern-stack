@@ -30,11 +30,26 @@ export const List = inject(
     }
 
     useEffect(() => {
-      props.UserStore.read()
+      props.UserStore.read({}).then()
     }, [props.UserStore])
     const {list} = props.UserStore
 
-    const filteredList = [...list.values()].filter(
+    const readMore = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop ===
+        document.scrollingElement.scrollHeight
+      )
+        props.UserStore.read({more: true}).then()
+    }
+
+    useEffect(() => {
+      window.addEventListener('scroll', readMore)
+      return () => {
+        window.removeEventListener('scroll', readMore)
+      }
+    })
+
+    const filteredList = list.filter(
       i =>
         i.first.toLowerCase().indexOf(query) > -1 ||
         i.last.toLowerCase().indexOf(query) > -1
@@ -47,13 +62,20 @@ export const List = inject(
       <React.Fragment>
         <div className="list">
           <div className="searchInput text-right pr-4">
-            {/*<Input type="text" className="form-control-sm" placeholder="Filter ..." value={this.state.query}*/}
-            {/*       onChange={this.handleFilter}/>*/}
-            {/*<small className="text-muted">Total result: {this.props.count}</small>*/}
+            <input
+              type="text"
+              className="form-control-sm"
+              placeholder="Filter ..."
+              value={query}
+              onChange={handleFilter}
+            />
+            <small className="text-muted">Total result: {0}</small>
           </div>
-          <div className="row">
+          <div className="row g-2">
             {filteredList.map(i => (
-              <Item key={i.id} id={i.id} data={i} />
+              <div key={i.id} className="col-xl-4 col-md-6 col-sm-12">
+                <Item id={i.id} data={i} />
+              </div>
             ))}
           </div>
           {/*{this.props.count &&*/}
@@ -114,7 +136,7 @@ export const List = inject(
 //       return <div className="col-sm-4" key={item.uid}>
 //         <div className="card mb-2">
 //           <div className="card-body p-2">
-//             <Avatar className="img-thumbnail rounded-circle float-left mr-2"
+//             <Avatar className="img-thumbnail rounded-circle float-left me-2"
 //                     src={item.avatar} alt={item.name}
 //                     width="100" height="100"/>
 //             <div className="">
@@ -127,7 +149,7 @@ export const List = inject(
 //                 {item.uid &&
 //                 <Link to={'/' + (item.username || item.uid)} className="btn btn-sm btn-primary">PROFILE</Link>}
 //                 {(isAdmin || isEditor) &&
-//                 <Link to={'/users/' + item.uid + '/edit'} className="btn btn-sm btn-success ml-1">EDIT</Link>}
+//                 <Link to={'/users/' + item.uid + '/edit'} className="btn btn-sm btn-success ms-1">EDIT</Link>}
 //               </div>
 //             </div>
 //           </div>

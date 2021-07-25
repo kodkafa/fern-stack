@@ -1,6 +1,6 @@
-import {firebase} from 'fb/initialize'
+import {firebase} from 'rest/firebase/initialize'
 import {action, makeObservable, observable} from 'mobx'
-import {Account as Model} from 'models'
+import {Account as Model} from 'rest/models'
 import moment from 'moment'
 
 export class AuthStore {
@@ -15,6 +15,7 @@ export class AuthStore {
       authenticated: observable,
       me: observable,
       changeDisplayName: action,
+      handleAuth: action,
       reAuth: action,
       signOut: action,
       getUserData: action,

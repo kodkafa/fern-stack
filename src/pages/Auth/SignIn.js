@@ -3,8 +3,8 @@ import React, {useEffect, useState} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {useTranslation} from 'react-i18next'
 import * as Yup from 'yup'
-import {Form, Input, Submit} from 'form'
-import {Validator} from 'helpers/validations'
+import {Form, Input, Submit} from 'components/form'
+import {Validator} from 'rest/helpers/validations'
 
 export const SignIn = inject('AuthStore')(
   observer(props => {

@@ -9,7 +9,7 @@ const {authorization, isAdmin, isEditor, isManager, isWorker} = require('./autho
 const db = admin.firestore();
 
 // USERS
-// =====================================================================================================================
+// =============================================================================
 const users = express();
 users.use(cors({origin: true}));
 users.use(authorization);
@@ -94,4 +94,4 @@ users.put('/:id/toggleClaim', async (req, res) => {
     return res.status(500).end(JSON.stringify(error.errorInfo));
   }
 });
-exports.users = functions.https.onRequest(users);
+exports.functions = functions.https.onRequest(users);
