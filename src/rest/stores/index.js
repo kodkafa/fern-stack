@@ -3,6 +3,7 @@ import {SystemMessageStore} from './SystemMessageStore'
 // import NotificationStore from './NotificationStore';
 import {AuthStore} from './AuthStore'
 import {UserStore} from './UserStore'
+import {PostStore} from './PostStore'
 
 class RootStore {
   constructor() {
@@ -11,6 +12,7 @@ class RootStore {
     // this.NotificationStore = new NotificationStore(this);
     this.AuthStore = new AuthStore(this)
     this.UserStore = new UserStore(this)
+    this.PostStore = new PostStore(this)
   }
 }
 

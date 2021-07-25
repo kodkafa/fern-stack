@@ -14,3 +14,5 @@ export {ChangePassword} from './Settings/ChangePassword'
 export {Info} from './Info/Info'
 
 export {Users} from './Users'
+export {Projects} from './Projects'
+export {Posts} from './Posts'

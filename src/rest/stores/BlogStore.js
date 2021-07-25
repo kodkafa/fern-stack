@@ -1,5 +1,5 @@
 import {firebase} from 'fb/initialize'
-import {action, makeObservable, observable, computed, runInAction} from 'mobx'
+import {action, computed, makeObservable, observable, runInAction} from 'mobx'
 import {UserServices as Services} from 'services'
 import {User as Model} from 'models'
 import uuid from 'react-uuid'

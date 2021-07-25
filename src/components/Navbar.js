@@ -76,6 +76,13 @@ export const Navbar = inject('AuthStore')(
                 </Link>
               </li>
             )}
+            {(me.isEditor || me.isManager || me.isAdmin) && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/posts">
+                  Posts
+                </Link>
+              </li>
+            )}
           </React.Fragment>
         )
       } else {
