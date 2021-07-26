@@ -1,4 +1,4 @@
-import {firebase} from 'rest/firebase/initialize'
+import {firebase, auth, database, firestore} from 'rest/firebase/initialize'
 import {action, makeObservable, observable} from 'mobx'
 import {Account as Model} from 'rest/models'
 import moment from 'moment'
@@ -25,8 +25,7 @@ export class AuthStore {
   getUserData = async data => {
     if (this.authenticated || !data) return false
 
-    const user = await firebase
-      .firestore()
+    const user = await firestore
       .collection('users')
       .doc(data.uid)
       .get()
@@ -34,8 +33,7 @@ export class AuthStore {
       .catch(error => this.stores.SystemMessageStore.handleError(error))
 
     // replace user custom claims data with original
-    const customClaims = await firebase
-      .auth()
+    const customClaims = await auth
       .currentUser.getIdTokenResult()
       .then(result => result.claims)
       .catch(error => this.stores.SystemMessageStore.handleError(error))
@@ -56,13 +54,11 @@ export class AuthStore {
     password,
   }) => {
     try {
-      await firebase
-        .auth()
+      await auth
         .createUserWithEmailAndPassword(email, password)
         .then(async data => {
           const {user} = data
-          await firebase
-            .firestore()
+          await firestore
             .collection('users')
             .doc(user.uid)
             .set({
@@ -83,8 +79,7 @@ export class AuthStore {
     const user = this.me
     const username = 'goker' //user.username;
     console.log('test', {user})
-    firebase
-      .firestore()
+    firestore
       .collection('users')
       .doc(user.uid)
       .set({
@@ -94,8 +89,7 @@ export class AuthStore {
         born: '1983',
       })
       .catch(error => this.stores.SystemMessageStore.handleError(error))
-    firebase
-      .firestore()
+    firestore
       .collection('usernames')
       .doc(username)
       .set({
@@ -111,8 +105,7 @@ export class AuthStore {
   }
 
   userSave = ({user, username, first, last, born}) => {
-    const ref = firebase
-      .firestore()
+    const ref = firestore
       .collection('users')
       .doc(user.uid)
       .set({
@@ -129,13 +122,11 @@ export class AuthStore {
 
   signIn = async ({email, password}) => {
     try {
-      await firebase
-        .auth()
+      await auth
         .setPersistence(firebase.auth.Auth.Persistence.SESSION)
         .then(
           async () =>
-            await firebase
-              .auth()
+            await auth
               .signInWithEmailAndPassword(email, password)
               .then(async result => await this.getUserData(result.user))
         )
@@ -155,12 +146,11 @@ export class AuthStore {
 
     let callback = null
     let metadataRef = null
-    firebase.auth().onAuthStateChanged(user => {
+    auth.onAuthStateChanged(user => {
       //this.authenticated = null;
       if (callback) metadataRef.off('value', callback)
       if (user) {
-        metadataRef = firebase
-          .database()
+        metadataRef = database
           .ref('metadata/' + user.uid + '/refreshTime')
         callback = snapshot => user.getIdToken(true)
         metadataRef.on('value', callback)
@@ -170,8 +160,7 @@ export class AuthStore {
   }
 
   signOut = async () =>
-    await firebase
-      .auth()
+    await auth
       .signOut()
       .then(user => {
         this.authenticated = false
@@ -181,7 +170,7 @@ export class AuthStore {
       .catch(error => error)
 
   reAuth = currentPassword => {
-    const user = firebase.auth().currentUser
+    const user = auth.currentUser
     if (user !== null) this.displayName = user.displayName
     const cred = firebase.auth.EmailAuthProvider.credential(
       user.email,
@@ -193,7 +182,7 @@ export class AuthStore {
   changeUserPassword = async ({currentPassword, newPassword}) => {
     try {
       await this.reAuth(currentPassword).then(() =>
-        firebase.auth().currentUser.updatePassword(newPassword)
+        auth.currentUser.updatePassword(newPassword)
       )
     } catch (error) {
       return this.stores.SystemMessageStore.handleError(error)
@@ -205,12 +194,12 @@ export class AuthStore {
 
   changeDisplayName = displayName => {
     this.displayName = displayName
-    return firebase.auth().currentUser.updateProfile({displayName})
+    return auth.currentUser.updateProfile({displayName})
   }
 
   reset = async ({email}) => {
     try {
-      await firebase.auth().sendPasswordResetEmail(email)
+      await auth.sendPasswordResetEmail(email)
     } catch (error) {
       return this.stores.SystemMessageStore.handleError(error)
     }

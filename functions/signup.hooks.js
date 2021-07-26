@@ -5,7 +5,7 @@ const admin = require('firebase-admin')
 // =============================================================================
 exports.hook = functions.auth.user().onCreate((user) => {
   // Check if user meets role criteria.
-  if (user.email && user.email.endsWith('@cebeci.name')) {
+  if (user.email && user.email.endsWith('goker@kodkafa.com')) {
     const customClaims = {
       admin: true,
       accessLevel: 8,

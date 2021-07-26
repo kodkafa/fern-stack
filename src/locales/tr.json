@@ -1,0 +1,16 @@
+{
+  "test test test": "123 test test test",
+  "Email is required": "Eposta bilgisi gerekli!",
+  "Email must be a valid email": "Eposta geçerli olmalı",
+  "Password is required": "Password is required",
+  "Password must include at least one uppercase character": "Password must include at least one uppercase character",
+  "Password must include at least one lowercase character": "Password must include at least one lowercase character",
+  "Password must contain a number": "Password must contain a number",
+  "Password must include at least one special character": "Password must include at least one special character",
+  "Password is too short - should be 8 chars minimum": "Password is too short - should be 8 chars minimum",
+  "Email": "Email",
+  "Password": "Password",
+  "Remember me": "Remember me",
+  "Sign In": "Sign In",
+  "Sorry to see you go ...": "Sorry to see you go ..."
+}

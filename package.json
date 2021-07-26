@@ -50,7 +50,8 @@
     "major": "yarn version --major && git push",
     "merge": "git push origin dev:master",
     "deploy": "yarn build && firebase deploy --only=hosting",
-    "deploy:functions": "yarn build && firebase deploy --only=functions",
+    "deploy:functions": "firebase deploy --only=functions",
+    "deploy:firestore:indexes": "firebase deploy --only firestore:indexes",
     "deploy:all": "yarn build && firebase deploy",
     "prepare": "husky install"
   },

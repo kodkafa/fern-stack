@@ -1,4 +1,4 @@
-import {db, firebase} from 'rest/firebase/initialize'
+import {firestore, storage} from 'rest/firebase/initialize'
 import {action, computed, makeObservable, observable, runInAction} from 'mobx'
 import {User as Model} from 'rest/models'
 import uuid from 'react-uuid'
@@ -58,7 +58,7 @@ export class UserStore {
     // this.data = data
     // console.log('function call users', this.data)
 
-    let ref = db
+    let ref = firestore
       .collection('users')
       // .orderBy('username', order)
       .orderBy('first', order)
@@ -125,8 +125,7 @@ export class UserStore {
     // this.data = this._list.get(id)
     // if (this.data) return this.data
     try {
-      const user = await firebase
-        .firestore()
+      const user = await firestore
         .collection('users')
         .doc(id)
         .get()
@@ -144,8 +143,7 @@ export class UserStore {
     if (!username) return
     try {
       const uid = username.match(/^.{5,22}$/)
-        ? await firebase
-            .firestore()
+        ? await firestore
             .collection('usernames')
             .doc(username)
             .get()
@@ -156,8 +154,7 @@ export class UserStore {
         this.data = false
         return
       }
-      const user = await firebase
-        .firestore()
+      const user = await firestore
         .collection('users')
         .doc(uid)
         .get()
@@ -203,8 +200,7 @@ export class UserStore {
   updateMe = async ({first, last, born, bio}) => {
     const uid = this.stores.AuthStore.me.uid
     try {
-      await firebase
-        .firestore()
+      await firestore
         .collection('users')
         .doc(uid)
         .update({first, last, born, bio})
@@ -221,7 +217,6 @@ export class UserStore {
 
   deleteImage = async name => {
     if (typeof name === 'string') {
-      const storage = firebase.storage()
       await storage.ref('images/').child(name).delete()
     }
   }
@@ -230,7 +225,6 @@ export class UserStore {
     {image, progress = () => null, error = () => null, complete = () => null},
     mode = 'avatar'
   ) => {
-    const storage = firebase.storage()
     const name = uuid() + '.png'
     const uploading = storage.ref('images/').child(name).put(image, {
       contentType: 'image/png',
@@ -254,8 +248,7 @@ export class UserStore {
   uploadCover = async params => await this.uploadFile(params, 'cover')
 
   listenToDB = agencyId => {
-    this.dbListener = firebase
-      .firestore()
+    this.dbListener = firestore
       .collection('users')
       //.orderBy('createdAt', 'asc')
       .onSnapshot(snapshot => {

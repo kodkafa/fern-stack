@@ -27,7 +27,6 @@ import {
   TermsOfService,
   Username,
   Users,
-  Posts,
   Welcome,
 } from 'pages'
 
@@ -161,11 +160,6 @@ export const Routing = props => {
         <RestrictedRoute
           path="users/*"
           component={Users}
-          authenticated={props.authenticated}
-        />
-        <RestrictedRoute
-          path="posts/*"
-          component={Posts}
           authenticated={props.authenticated}
         />
         <Route path="*" element={<NoMatch />} />
