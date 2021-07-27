@@ -1,42 +1,37 @@
+
 const express = require('express')
-const cors = require('cors') // ({origin: true});
+const cors = require('cors')// ({origin: true});
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
-const {
-  authorization,
-  isAdmin,
-  isEditor,
-} = require('./authorization')
+const {authorization, isAdmin, isEditor} = require('./authorization')
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 
-const db = admin.firestore()
+const auth = admin.auth()
+const database = admin.database()
+const firestore = admin.firestore()
 
 // USERS
 // =============================================================================
 const users = express()
 users.use(cors({origin: true}))
 users.use(authorization)
-users.get('/', (req, res) => {
+users.get('/', async (req, res) => {
   try {
     const nextPageToken = req.params.nextPageToken
-    admin
-        .auth()
-        .listUsers(100, nextPageToken)
-        .then((result) => {
-          console.log({result})
-          return res.end(JSON.stringify(result.users))
-        })
+    const result = await auth.listUsers(100, nextPageToken)
+    console.log({result})
+    return res.end(JSON.stringify(result.users))
   } catch (error) {
     console.log('Error', error.errorInfo)
     return res.status(500).end(JSON.stringify(error.errorInfo))
   }
 })
-users.get('/:id', isEditor, (req, res) => {
+users.get('/:id', isEditor, async (req, res) => {
   try {
     // console.log('CLAIMS', req.claims);
-    admin.auth().getUser(req.params.id)
-        .then((result) => res.end(JSON.stringify(result)))
+    const result = await auth.getUser(req.params.id)
+    return res.end(JSON.stringify(result))
   } catch (error) {
     console.log('Error', error.errorInfo)
     return res.status(500).end(JSON.stringify(error.errorInfo))
@@ -44,89 +39,71 @@ users.get('/:id', isEditor, (req, res) => {
 })
 users.delete('/:id/delete', isAdmin, (req, res) => {
   try {
-    const user = admin.auth().getUserByEmail(req.body.email).end()
+    const user = auth.getUserByEmail(req.body.email).end()
     console.log('getUserByEmail', {user})
     if (user) {
       user.delete().end()
-      return res
-          .status(200)
-          .end(
-              JSON.stringify({
-                code: 'user-deleted',
-                message: 'User successfully deleted!',
-              }))
+      return res.status(200)
+          .end(JSON.stringify({
+            code: 'user-deleted',
+            message: 'User successfully deleted!'}))
     } else {
-      // eslint-disable-next-line max-len
-      return res.status(404).end(JSON.stringify({code: 'user-not-found', message: 'User not found!'}))
+      return res.status(404)
+          .end(JSON.stringify({
+            code: 'user-not-found',
+            message: 'User not found!'}))
     }
   } catch (error) {
     console.log('Error', error.errorInfo)
     return res.status(500).end(JSON.stringify(error.errorInfo))
   }
 })
-users.put('/:id/toggleClaim', (req, res) => {
+users.put('/:id/toggleClaim', async (req, res) => {
   try {
-    admin
-        .auth()
-        .getUser(req.params.id)
-        .then((result) => {
-          const user = result.toJSON()
-          if (user) {
-            // eslint-disable-next-line no-prototype-builtins
-            if (req.body.hasOwnProperty('disable')) {
-              db.collection('users')
-                  .doc(user.uid)
-                  .update({disabled: req.body.disable})
-                  .catch((error) => {
-                    console.log('disable', error)
-                  })
-              return res.status(200).end(JSON.stringify(user))
-            }
-
-            admin
-                .auth()
-                .setCustomUserClaims(user.uid, req.body)
-                .then(() => {
-                  // eslint-disable-next-line max-len
-                  const metadataRef = admin.database().ref('metadata/' + user.uid)
-                  // eslint-disable-next-line max-len
-                  metadataRef.set({refreshTime: new Date().getTime()}).then(()=>{
-                    // eslint-disable-next-line max-len
-                    console.log('user.customClaims', user.customClaims, req.body)
-                    if (!req.body) delete user.customClaims
-                    // eslint-disable-next-line max-len
-                    // else if (user.hasOwnProperty('customClaims') && user.customClaims)
-                    //   for (const key in req.body)
-                    //     user.customClaims[key] = req.body[key];
-                    else user.customClaims = req.body
-
-                    console.log('user.customClaims', user.customClaims)
-                    db.collection('users')
-                        .doc(user.uid)
-                        .update({customClaims: user.customClaims})
-                        .catch((error) => {
-                          console.log('customClaims', error)
-                        })
-                    return res.status(200).end(JSON.stringify(user))
-                  })
-                })
-                .catch((error) => {
-                  console.log('setCustomUserClaims', error)
-                })
-          } else {
-            return res
-                .status(404)
-            // eslint-disable-next-line max-len
-                .end(JSON.stringify({code: 'user-not-found', message: 'User not found!'}))
-          }
-        })
+    const user = await auth.getUser(req.params.id)
+        .then((user) => user.toJSON())
         .catch((error) => {
           console.log('User Not Found', error)
-          return res
-              .status(404)
-          // eslint-disable-next-line max-len
-              .end(JSON.stringify({code: 'not_found', message: 'User not found!'}))
+          return res.status(404)
+              .end(JSON.stringify({
+                code: 'not_found',
+                message: 'User not found!'}))
         })
+    if (user) {
+      // if (req.body.hasOwnProperty('disable')) {
+      //   firestore.collection('users').doc(user.uid)
+      //       .update({disabled: req.body.disable})
+      //       .catch((error) => {
+      //         console.log('disable', error)
+      //       })
+      //   return res.status(200).end(JSON.stringify(user))
+      // }
+
+      // update custom  claims
+      await auth.setCustomUserClaims(user.uid, req.body)
+          .catch((error) => {
+            console.log('setCustomUserClaims', error)
+          })
+      // get updated custom claims from auth
+      const customClaims = await auth.getUser(user.uid)
+          .then((user) => user.customClaims)
+      console.log('user.customClaims', req.body, customClaims)
+      // update user on firestore
+      firestore.collection('users').doc(user.uid)
+          .update({customClaims})
+          .catch((error) => {
+            console.log('customClaims', error)
+          })
+      user.customClaims = customClaims
+      const metadataRef = await database.ref('metadata/' + user.uid)
+      metadataRef.set({refreshTime: new Date().getTime()})
+      return res.status(200).end(JSON.stringify(user))
+    } else {
+      return res.status(404)
+          .end(JSON.stringify({
+            code: 'user-not-found',
+            message: 'User not found!'}))
+    }
   } catch (error) {
     console.log('Error', error)
     return res.status(500).end(JSON.stringify(error.errorInfo))
