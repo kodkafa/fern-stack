@@ -82,14 +82,16 @@ _Add Firebase to your web app_ with _Firebase Hosting_
 
 Copy your **Config** from **SDK setup and configuration** and paste to "**src/rest/firebase/config.json**"
 
-Finally,
-
-```
-firebase deploy:all
-```
+Set an admin email for registration in __functions/sinuphooks__
 
 
 You can start to development, 
 ```
 yarn dev
+```
+
+Easy deploy:
+
+```
+firebase deploy:all
 ```
