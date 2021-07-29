@@ -70,14 +70,19 @@ users.put('/:id/toggleClaim', async (req, res) => {
                 message: 'User not found!'}))
         })
     if (user) {
-      // if (req.body.hasOwnProperty('disable')) {
-      //   firestore.collection('users').doc(user.uid)
-      //       .update({disabled: req.body.disable})
-      //       .catch((error) => {
-      //         console.log('disable', error)
-      //       })
-      //   return res.status(200).end(JSON.stringify(user))
-      // }
+      // eslint-disable-next-line no-prototype-builtins
+      if (req.body.hasOwnProperty('disable')) {
+        await auth.updateUser(user.uid, {disabled: req.body.disable})
+        await firestore.collection('users').doc(user.uid)
+            .update({disabled: req.body.disable})
+            .catch((error) => {
+              console.log('disable', error)
+            })
+        user.disabled = req.body.disable
+        const metadataRef = await database.ref('metadata/' + user.uid)
+        metadataRef.set({refreshTime: new Date().getTime()})
+        return res.status(200).end(JSON.stringify(user))
+      }
 
       // update custom  claims
       await auth.setCustomUserClaims(user.uid, req.body)
