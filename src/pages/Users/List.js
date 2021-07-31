@@ -7,16 +7,16 @@ import qs from 'qs'
 
 export const List = inject(
   'AuthStore',
-  'UserStore'
+  'UserStore',
 )(
   observer(props => {
     const {t} = useTranslation()
     const navigate = useNavigate()
     // const {page=1} = useParams()
-    const {page = 1, search} = useLocation()
-    const params = {...qs.parse(search, {ignoreQueryPrefix: true})}
+    const {search} = useLocation()
+    const {search: q} = {...qs.parse(search, {ignoreQueryPrefix: true})}
     const [loading, setLoading] = useState(false)
-    const [query, setQuery] = useState(search)
+    const [query, setQuery] = useState(q)
 
     const handleFilter = e => {
       e.preventDefault()
@@ -25,13 +25,17 @@ export const List = inject(
 
     const handleSearch = e => {
       e.preventDefault()
-      console.log(e.key)
       if (e.key === 'Enter') return navigate('?search=' + query)
     }
 
+    const handleGetMore = e => {
+      e.preventDefault()
+      props.UserStore.read({more: true}).then()
+    }
+
     useEffect(() => {
-      props.UserStore.read({}).then()
-    }, [props.UserStore])
+      props.UserStore.read({q: query}).then()
+    }, [props.UserStore, query])
     const {list} = props.UserStore
 
     const readMore = () => {
@@ -52,7 +56,7 @@ export const List = inject(
     const filteredList = list.filter(
       i =>
         i.first.toLowerCase().indexOf(query) > -1 ||
-        i.last.toLowerCase().indexOf(query) > -1
+        i.last.toLowerCase().indexOf(query) > -1,
     )
     //         || i.username.toLowerCase().indexOf(this.state.query) > -1));
 
@@ -60,20 +64,21 @@ export const List = inject(
       <div>{t('Loading...')}</div>
     ) : (
       <React.Fragment>
-        <div className="list">
-          <div className="searchInput text-right pr-4">
+        <div className='list'>
+          <div className='d-flex flex-row-reverse align-content-center pr-4 mb-2 '>
             <input
-              type="text"
-              className="form-control-sm"
-              placeholder="Filter ..."
+              type='text'
+              className='form-control-sm'
+              placeholder='Filter ...'
               value={query}
               onChange={handleFilter}
+              onKeyUp={handleSearch}
             />
-            <small className="text-muted">Total result: {0}</small>
+            {/*<small className='text-muted'>Total result: {0}</small>*/}
           </div>
-          <div className="row g-2">
+          <div className='row g-2'>
             {filteredList.map(i => (
-              <div key={i.id} className="col-xl-4 col-md-6 col-sm-12">
+              <div key={i.id} className='col-xl-4 col-md-6 col-sm-12'>
                 <Item id={i.id} data={i} />
               </div>
             ))}
@@ -82,10 +87,15 @@ export const List = inject(
           {/*<Pagination page={this.state.page} count={this.props.count}*/}
           {/*            limit={this.state.limit} range={this.state.range}*/}
           {/*            query={{search: this.props.search}}/>}*/}
+          <div className='text-center mt-3 '>
+            <button className='btn btn-primary btn-sm text-white' onClick={handleGetMore}>
+              Get More
+            </button>
+          </div>
         </div>
       </React.Fragment>
     )
-  })
+  }),
 )
 
 // @inject('AuthStore', 'UserStore')

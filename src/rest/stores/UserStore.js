@@ -49,7 +49,7 @@ export class UserStore {
     return (this.list[this.list.length - 1] || {}).id
   }
 
-  read = async ({q = null, limit = 10, order = 'asc', more = false}) => {
+  read = async ({q = null, limit = 3, order = 'asc', more = false}) => {
     // try {
 
     //const urlParams = new URLSearchParams(Object.entries(params))
@@ -67,13 +67,10 @@ export class UserStore {
     // search
     //if (q)
     // ref = ref.where('username', '>=', q).where('username', '<=', q + '\uf8ff')
+    console.log("search",{q})
     if (q) ref.where('first', '>=', q).where('first', '<=', q + '\uf8ff')
     //pagination (cursor query)
-    if (more && this.cursor) {
-      console.log({more, cursor: this.cursor})
-
-      ref = ref.startAfter(this.cursor)
-    }
+    if (more && this.cursor) ref = ref.startAfter(this.cursor)
     ref = ref.limit(limit)
     const snapshot = await ref.get() //.where('capital', '==', true).get();
     if (snapshot.empty) {
@@ -82,7 +79,6 @@ export class UserStore {
     }
 
     snapshot.forEach(doc => {
-      console.log(doc.id)
       this._list.set(doc.id, new Model({id: doc.id, ...doc.data()}))
     })
     this.cursor = snapshot.docs[snapshot.docs.length - 1]
