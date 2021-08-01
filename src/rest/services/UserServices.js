@@ -17,7 +17,7 @@ export class Services {
     }
   }
 
-  static post = async model => {
+  static create = async model => {
     const token = await this.getToken()
     const options = {
       method: 'POST',
@@ -31,7 +31,7 @@ export class Services {
     const request = new Request(APIURL, options)
     return await fetch(request)
   }
-  static get = async params => {
+  static read = async params => {
     const id = typeof params === 'string' ? params : null
     const token = await this.getToken()
     //const data = {idToken: token, id};
@@ -56,7 +56,7 @@ export class Services {
     }
     //return response.json();
   }
-  static put = async (id, model) => {
+  static update = async (id, model) => {
     const headers = new Headers()
     headers.append('Content-Type', 'application/json')
     const options = {

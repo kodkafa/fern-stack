@@ -7,7 +7,7 @@ import qs from 'qs'
 
 export const List = inject(
   'AuthStore',
-  'UserStore',
+  'UserStore'
 )(
   observer(props => {
     const {t} = useTranslation()
@@ -37,6 +37,7 @@ export const List = inject(
       props.UserStore.read({q: query}).then()
     }, [props.UserStore, query])
     const {list} = props.UserStore
+    console.log(list.map(i => i.first))
 
     const readMore = () => {
       if (
@@ -56,7 +57,7 @@ export const List = inject(
     const filteredList = list.filter(
       i =>
         i.first.toLowerCase().indexOf(query) > -1 ||
-        i.last.toLowerCase().indexOf(query) > -1,
+        i.last.toLowerCase().indexOf(query) > -1
     )
     //         || i.username.toLowerCase().indexOf(this.state.query) > -1));
 
@@ -64,38 +65,56 @@ export const List = inject(
       <div>{t('Loading...')}</div>
     ) : (
       <React.Fragment>
-        <div className='list'>
-          <div className='d-flex flex-row-reverse align-content-center pr-4 mb-2 '>
+        <div className="list">
+          <div className="d-flex flex-row-reverse align-content-center pr-4 mb-2 ">
             <input
-              type='text'
-              className='form-control-sm'
-              placeholder='Filter ...'
+              type="text"
+              className="form-control-sm"
+              placeholder="Filter ..."
               value={query}
               onChange={handleFilter}
               onKeyUp={handleSearch}
             />
             {/*<small className='text-muted'>Total result: {0}</small>*/}
           </div>
-          <div className='row g-2'>
-            {filteredList.map(i => (
-              <div key={i.id} className='col-xl-4 col-md-6 col-sm-12'>
+          <table className="table table-striped table-responsive-sm small">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">First</th>
+                <th scope="col">Last</th>
+                <th scope="col">Username</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Last Login</th>
+                <th scope="col">Level</th>
+                <th scope="col">Providers</th>
+                <th scope="col">Status</th>
+                <th scope="col">
+                  <i className="fa fa-pencil-alt" aria-hidden="true"/>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredList.map(i => (
                 <Item id={i.id} data={i} />
-              </div>
-            ))}
-          </div>
+              ))}
+            </tbody>
+          </table>
           {/*{this.props.count &&*/}
           {/*<Pagination page={this.state.page} count={this.props.count}*/}
           {/*            limit={this.state.limit} range={this.state.range}*/}
           {/*            query={{search: this.props.search}}/>}*/}
-          <div className='text-center mt-3 '>
-            <button className='btn btn-primary btn-sm text-white' onClick={handleGetMore}>
+          <div className="text-center mt-3 ">
+            <button
+              className="btn btn-primary btn-sm text-white"
+              onClick={handleGetMore}>
               Get More
             </button>
           </div>
         </div>
       </React.Fragment>
     )
-  }),
+  })
 )
 
 // @inject('AuthStore', 'UserStore')

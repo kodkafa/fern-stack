@@ -1,6 +1,7 @@
-import {firestore, storage} from 'rest/firebase/initialize'
+import {firestore, storage, auth} from 'rest/firebase/initialize'
 import {action, computed, makeObservable, observable, runInAction} from 'mobx'
 import {User as Model} from 'rest/models'
+import {UserServices as Services} from 'rest/services'
 import uuid from 'react-uuid'
 
 export class UserStore {
@@ -49,7 +50,14 @@ export class UserStore {
     return (this.list[this.list.length - 1] || {}).id
   }
 
-  read = async ({q = null, limit = 3, order = 'asc', more = false}) => {
+  read = async ({q = null, limit = 10, order = 'asc', more = false}) => {
+    const res = await Services.read({q, limit, order, more})
+    console.log({res})
+    res.map(i => {
+      this._list.set(i.uid, new Model({id: i.uid, ...i}))
+      return i
+    })
+
     // try {
 
     //const urlParams = new URLSearchParams(Object.entries(params))
@@ -58,30 +66,6 @@ export class UserStore {
     // this.data = data
     // console.log('function call users', this.data)
 
-    let ref = firestore
-      .collection('users')
-      // .orderBy('username', order)
-      .orderBy('first', order)
-      .orderBy('last', order)
-
-    // search
-    //if (q)
-    // ref = ref.where('username', '>=', q).where('username', '<=', q + '\uf8ff')
-    console.log("search",{q})
-    if (q) ref.where('first', '>=', q).where('first', '<=', q + '\uf8ff')
-    //pagination (cursor query)
-    if (more && this.cursor) ref = ref.startAfter(this.cursor)
-    ref = ref.limit(limit)
-    const snapshot = await ref.get() //.where('capital', '==', true).get();
-    if (snapshot.empty) {
-      console.log('No matching documents.')
-      //throw new Error("'No matching documents.'")
-    }
-
-    snapshot.forEach(doc => {
-      this._list.set(doc.id, new Model({id: doc.id, ...doc.data()}))
-    })
-    this.cursor = snapshot.docs[snapshot.docs.length - 1]
     // console.log('last', lastVisible)
 
     // console.log('read')
@@ -93,6 +77,32 @@ export class UserStore {
     //   this.status = 'error'
     //   console.error(error)
     // }
+
+    // // FROM FIRESTORE
+    // let ref = firestore
+    //   .collection('users')
+    //   // .orderBy('username', order)
+    //   .orderBy('first', order)
+    //   .orderBy('last', order)
+    //
+    // if (q) {
+    //   console.log('search', {q})
+    //   ref.where('first', '>=', q)//.where('first', '<=', q + '\uf8ff')
+    // }
+    //
+    // if (more && this.cursor) ref = ref.startAfter(this.cursor)
+    // ref = ref.limit(limit)
+    // const snapshot = await ref.get() //.where('capital', '==', true).get();
+    // if (snapshot.empty) {
+    //   console.log('No matching documents.')
+    //   //throw new Error("'No matching documents.'")
+    // }
+    //
+    // snapshot.forEach(doc => {
+    //   this._list.set(doc.id, new Model({id: doc.id, ...doc.data()}))
+    // })
+    // this.cursor = snapshot.docs[snapshot.docs.length - 1]
+    //
   }
 
   // getUsers = async () => {
