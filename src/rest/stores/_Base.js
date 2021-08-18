@@ -1,16 +1,17 @@
 import {firestore} from 'rest/firebase/initialize'
-import {action, computed, makeObservable, observable, runInAction} from 'mobx'
-import {Post as Model} from 'rest/models'
+import {action, computed, makeObservable, observable} from 'mobx'
+import {Project as Model} from 'rest/models'
 import uuid from 'react-uuid'
 
-const COLLECTION = 'posts'
-
-export class PostStore {
-  item = new Model({})
+export class _Base {
+  #collection = ''
   searchQuery = ''
 
-  constructor(Stores) {
+  constructor(Stores, Model, collection) {
     this.stores = Stores
+    this.item = new Model()
+    this.#collection = collection
+
     makeObservable(this, {
       _list: observable,
       item: observable,
@@ -22,12 +23,15 @@ export class PostStore {
       update: action,
       delete: action,
       getItemById: action,
-      getItemBySlug: action,
     })
   }
 
+  base = () => {
+    console.log('base', this.#collection, this)
+  }
+
   get newID() {
-    return COLLECTION.replace(/s/, uuid())
+    return this.#collection.replace(/s$/, uuid())
   }
 
   _list = new observable.map()
@@ -46,11 +50,8 @@ export class PostStore {
 
   create = async ({data}) => {
     data.id = this.newID
-    // const model = (new Model(data)).serialize()
-    // console.log({model})
-
     return await firestore
-      .collection(COLLECTION)
+      .collection(this.#collection)
       .doc(data.id)
       .withConverter(Model)
       .set(new Model(data))
@@ -71,7 +72,7 @@ export class PostStore {
     // console.log('function call users', this.data)
 
     let ref = firestore
-      .collection(COLLECTION)
+      .collection(this.#collection)
       // .orderBy('username', order)
       .orderBy('createdAt', order)
     //.orderBy('last', order)

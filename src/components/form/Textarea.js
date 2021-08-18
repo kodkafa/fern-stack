@@ -6,7 +6,6 @@ export function Textarea({name, label, className, ...rest}) {
     register,
     formState: {errors},
   } = useFormContext()
-  console.log({errors})
   return (
     <fieldset className={className}>
       {label && <label className="small">{label}</label>}

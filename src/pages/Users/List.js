@@ -13,10 +13,10 @@ export const List = inject(
     const {t} = useTranslation()
     const navigate = useNavigate()
     // const {page=1} = useParams()
-    const {page = 1, search} = useLocation()
-    const params = {...qs.parse(search, {ignoreQueryPrefix: true})}
+    const {search} = useLocation()
+    const {search: q} = {...qs.parse(search, {ignoreQueryPrefix: true})}
     const [loading, setLoading] = useState(false)
-    const [query, setQuery] = useState(search)
+    const [query, setQuery] = useState(q)
 
     const handleFilter = e => {
       e.preventDefault()
@@ -25,14 +25,19 @@ export const List = inject(
 
     const handleSearch = e => {
       e.preventDefault()
-      console.log(e.key)
       if (e.key === 'Enter') return navigate('?search=' + query)
     }
 
+    const handleGetMore = e => {
+      e.preventDefault()
+      props.UserStore.read({more: true}).then()
+    }
+
     useEffect(() => {
-      props.UserStore.read({}).then()
-    }, [props.UserStore])
+      props.UserStore.read({q: query}).then()
+    }, [props.UserStore, query])
     const {list} = props.UserStore
+    console.log(list.map(i => i.first))
 
     const readMore = () => {
       if (
@@ -61,27 +66,51 @@ export const List = inject(
     ) : (
       <React.Fragment>
         <div className="list">
-          <div className="searchInput text-right pr-4">
+          <div className="d-flex flex-row-reverse align-content-center pr-4 mb-2 ">
             <input
               type="text"
               className="form-control-sm"
               placeholder="Filter ..."
               value={query}
               onChange={handleFilter}
+              onKeyUp={handleSearch}
             />
-            <small className="text-muted">Total result: {0}</small>
+            {/*<small className='text-muted'>Total result: {0}</small>*/}
           </div>
-          <div className="row g-2">
-            {filteredList.map(i => (
-              <div key={i.id} className="col-xl-4 col-md-6 col-sm-12">
+          <table className="table table-striped table-responsive-sm small">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">First</th>
+                <th scope="col">Last</th>
+                <th scope="col">Username</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Last Login</th>
+                <th scope="col">Level</th>
+                <th scope="col">Providers</th>
+                <th scope="col">Status</th>
+                <th scope="col">
+                  <i className="fa fa-pencil-alt" aria-hidden="true" />
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredList.map(i => (
                 <Item id={i.id} data={i} />
-              </div>
-            ))}
-          </div>
+              ))}
+            </tbody>
+          </table>
           {/*{this.props.count &&*/}
           {/*<Pagination page={this.state.page} count={this.props.count}*/}
           {/*            limit={this.state.limit} range={this.state.range}*/}
           {/*            query={{search: this.props.search}}/>}*/}
+          <div className="text-center mt-3 ">
+            <button
+              className="btn btn-primary btn-sm text-white"
+              onClick={handleGetMore}>
+              Get More
+            </button>
+          </div>
         </div>
       </React.Fragment>
     )

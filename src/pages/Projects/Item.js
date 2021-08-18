@@ -1,6 +1,5 @@
 import {inject, observer} from 'mobx-react'
 import React from 'react'
-import {Avatar} from 'components'
 import {Link} from 'react-router-dom'
 
 export const Item = inject('AuthStore')(
@@ -10,7 +9,7 @@ export const Item = inject('AuthStore')(
     return (
       <div id={id} className="card">
         <div className="card-body">
-          <h3 className="h5 card-title text-truncate">{data.title}</h3>
+          <h3 className="h5 card-title text-truncate">{data.name}</h3>
           <p className="text-truncate">
             <small>{data.createdAt}</small> - <small>{data.updatedAt}</small>
           </p>

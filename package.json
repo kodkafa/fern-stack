@@ -8,7 +8,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "bootstrap": "5.0.2",
+    "bootstrap": "^5.1.0",
     "bootstrap-icons": "^1.5.0",
     "firebase": "^8.7.0",
     "history": "^5.0.0",
@@ -50,7 +50,8 @@
     "major": "yarn version --major && git push",
     "merge": "git push origin dev:master",
     "deploy": "yarn build && firebase deploy --only=hosting",
-    "deploy:functions": "yarn build && firebase deploy --only=functions",
+    "deploy:functions": "firebase deploy --only=functions",
+    "deploy:firestore:indexes": "firebase deploy --only firestore:indexes",
     "deploy:all": "yarn build && firebase deploy",
     "prepare": "husky install"
   },

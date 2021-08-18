@@ -14,12 +14,12 @@ export const Projects = () => {
               <i className="fa fa-users" /> User Management
             </h5>
             <ul className="nav flex-column small">
-              <li key="list" className="nav-item">
+              <li className="nav-item">
                 <Link className="nav-link active" to="add">
                   <i className="fa fa-plus" /> Add
                 </Link>
               </li>
-              <li key="list" className="nav-item">
+              <li className="nav-item">
                 <Link className="nav-link active" to="">
                   <i className="fa fa-list" /> List
                 </Link>
@@ -28,8 +28,8 @@ export const Projects = () => {
           </div>
         </nav>
         <main role="main" className="col-md-9 ms-sm-auto col-lg-10 px-4">
+          <Route path="/" element={<List />} />
           <Routes>
-            <Route path="/" element={<List />} />
             <Route path="/add" element={<Add />} />
             <Route path=":id/edit" element={<Edit />} />
           </Routes>

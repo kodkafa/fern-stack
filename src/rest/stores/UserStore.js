@@ -1,6 +1,7 @@
-import {db, firebase} from 'rest/firebase/initialize'
+import {firestore, storage} from 'rest/firebase/initialize'
 import {action, computed, makeObservable, observable, runInAction} from 'mobx'
 import {User as Model} from 'rest/models'
+import {UserServices as Services} from 'rest/services'
 import uuid from 'react-uuid'
 
 export class UserStore {
@@ -50,6 +51,13 @@ export class UserStore {
   }
 
   read = async ({q = null, limit = 10, order = 'asc', more = false}) => {
+    const res = await Services.read({q, limit, order, more})
+    console.log({res})
+    res.map(i => {
+      this._list.set(i.uid, new Model({id: i.uid, ...i}))
+      return i
+    })
+
     // try {
 
     //const urlParams = new URLSearchParams(Object.entries(params))
@@ -58,34 +66,6 @@ export class UserStore {
     // this.data = data
     // console.log('function call users', this.data)
 
-    let ref = db
-      .collection('users')
-      // .orderBy('username', order)
-      .orderBy('first', order)
-      .orderBy('last', order)
-
-    // search
-    //if (q)
-    // ref = ref.where('username', '>=', q).where('username', '<=', q + '\uf8ff')
-    if (q) ref.where('first', '>=', q).where('first', '<=', q + '\uf8ff')
-    //pagination (cursor query)
-    if (more && this.cursor) {
-      console.log({more, cursor: this.cursor})
-
-      ref = ref.startAfter(this.cursor)
-    }
-    ref = ref.limit(limit)
-    const snapshot = await ref.get() //.where('capital', '==', true).get();
-    if (snapshot.empty) {
-      console.log('No matching documents.')
-      //throw new Error("'No matching documents.'")
-    }
-
-    snapshot.forEach(doc => {
-      console.log(doc.id)
-      this._list.set(doc.id, new Model({id: doc.id, ...doc.data()}))
-    })
-    this.cursor = snapshot.docs[snapshot.docs.length - 1]
     // console.log('last', lastVisible)
 
     // console.log('read')
@@ -97,6 +77,32 @@ export class UserStore {
     //   this.status = 'error'
     //   console.error(error)
     // }
+
+    // // FROM FIRESTORE
+    // let ref = firestore
+    //   .collection('users')
+    //   // .orderBy('username', order)
+    //   .orderBy('first', order)
+    //   .orderBy('last', order)
+    //
+    // if (q) {
+    //   console.log('search', {q})
+    //   ref.where('first', '>=', q)//.where('first', '<=', q + '\uf8ff')
+    // }
+    //
+    // if (more && this.cursor) ref = ref.startAfter(this.cursor)
+    // ref = ref.limit(limit)
+    // const snapshot = await ref.get() //.where('capital', '==', true).get();
+    // if (snapshot.empty) {
+    //   console.log('No matching documents.')
+    //   //throw new Error("'No matching documents.'")
+    // }
+    //
+    // snapshot.forEach(doc => {
+    //   this._list.set(doc.id, new Model({id: doc.id, ...doc.data()}))
+    // })
+    // this.cursor = snapshot.docs[snapshot.docs.length - 1]
+    //
   }
 
   // getUsers = async () => {
@@ -125,8 +131,7 @@ export class UserStore {
     // this.data = this._list.get(id)
     // if (this.data) return this.data
     try {
-      const user = await firebase
-        .firestore()
+      const user = await firestore
         .collection('users')
         .doc(id)
         .get()
@@ -144,8 +149,7 @@ export class UserStore {
     if (!username) return
     try {
       const uid = username.match(/^.{5,22}$/)
-        ? await firebase
-            .firestore()
+        ? await firestore
             .collection('usernames')
             .doc(username)
             .get()
@@ -156,8 +160,7 @@ export class UserStore {
         this.data = false
         return
       }
-      const user = await firebase
-        .firestore()
+      const user = await firestore
         .collection('users')
         .doc(uid)
         .get()
@@ -203,8 +206,7 @@ export class UserStore {
   updateMe = async ({first, last, born, bio}) => {
     const uid = this.stores.AuthStore.me.uid
     try {
-      await firebase
-        .firestore()
+      await firestore
         .collection('users')
         .doc(uid)
         .update({first, last, born, bio})
@@ -221,7 +223,6 @@ export class UserStore {
 
   deleteImage = async name => {
     if (typeof name === 'string') {
-      const storage = firebase.storage()
       await storage.ref('images/').child(name).delete()
     }
   }
@@ -230,7 +231,6 @@ export class UserStore {
     {image, progress = () => null, error = () => null, complete = () => null},
     mode = 'avatar'
   ) => {
-    const storage = firebase.storage()
     const name = uuid() + '.png'
     const uploading = storage.ref('images/').child(name).put(image, {
       contentType: 'image/png',
@@ -254,8 +254,7 @@ export class UserStore {
   uploadCover = async params => await this.uploadFile(params, 'cover')
 
   listenToDB = agencyId => {
-    this.dbListener = firebase
-      .firestore()
+    this.dbListener = firestore
       .collection('users')
       //.orderBy('createdAt', 'asc')
       .onSnapshot(snapshot => {

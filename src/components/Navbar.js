@@ -76,6 +76,13 @@ export const Navbar = inject('AuthStore')(
                 </Link>
               </li>
             )}
+            {me.isAdmin && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/projects">
+                  Projects
+                </Link>
+              </li>
+            )}
             {(me.isEditor || me.isManager || me.isAdmin) && (
               <li className="nav-item">
                 <Link className="nav-link" to="/posts">
@@ -160,7 +167,8 @@ export const Navbar = inject('AuthStore')(
     return (
       <nav
         id="navbar"
-        className={'navbar navbar-expand-lg fixed-top ' + props.className}>
+        className={'navbar navbar-expand-lg fixed-top ' + props.className}
+        style={{zIndex: 1046}}>
         <div className="container-fluid">
           {renderLogo()}
           <button

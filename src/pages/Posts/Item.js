@@ -1,6 +1,5 @@
 import {inject, observer} from 'mobx-react'
 import React from 'react'
-import {Avatar} from 'components'
 import {Link} from 'react-router-dom'
 
 export const Item = inject('AuthStore')(

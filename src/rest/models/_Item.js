@@ -1,7 +1,3 @@
-import {firebase} from 'rest/firebase/initialize'
-import {computed, makeObservable, observable} from 'mobx'
-import {stores} from 'rest/stores'
-
 export class _Item {
   constructor(data = {}) {
     this.id = data.id || 0

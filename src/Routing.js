@@ -11,6 +11,7 @@ import {
 import {LayoutDefault, LayoutGuest, LayoutWelcome} from 'layouts'
 // import SignUp from './pages/Auth/SignUp'
 import {
+  Welcome,
   Account,
   ChangePassword,
   Dashboard,
@@ -27,8 +28,8 @@ import {
   TermsOfService,
   Username,
   Users,
+  Projects,
   Posts,
-  Welcome,
 } from 'pages'
 
 const RestrictedRoute = ({
@@ -161,6 +162,11 @@ export const Routing = props => {
         <RestrictedRoute
           path="users/*"
           component={Users}
+          authenticated={props.authenticated}
+        />
+        <RestrictedRoute
+          path="projects/*"
+          component={Projects}
           authenticated={props.authenticated}
         />
         <RestrictedRoute

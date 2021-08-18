@@ -13,4 +13,5 @@ export {SystemMessages} from './SystemMessages'
 
 export {DatePicker} from './DatePicker'
 export {Modal} from './Modal'
+export {SlideOver} from './SlideOver'
 export {CoverEditor} from './CoverEditor'

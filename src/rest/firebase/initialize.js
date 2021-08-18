@@ -5,20 +5,30 @@ import 'firebase/database'
 import 'firebase/firestore'
 import 'firebase/functions'
 import 'firebase/storage'
-// import {stores} from '../stores';
+
+// You should copy your conf. from firebase console
+// for more info please read the README.md
 import {config} from './config'
 
 firebase.initializeApp(config)
 const auth = firebase.auth()
+const database = firebase.database()
+const firestore = firebase.firestore()
 const functions = firebase.functions()
-const db = firebase.firestore()
+const storage = firebase.storage()
+
 if (process.env.NODE_ENV === 'development') {
-  functions.useFunctionsEmulator('http://localhost:5001')
+  auth.useEmulator('http://localhost:9099')
+  database.useEmulator('localhost', 9000)
+  firestore.useEmulator('localhost', 8080)
+  functions.useEmulator('localhost', 5001)
+  storage.useEmulator('localhost', 9199)
 }
+// not a good hack
 const APIURL =
   process.env.NODE_ENV === 'development'
-    ? 'http://localhost:5001/kodkafa-firebase/us-central1'
-    : 'https://us-central1-kodkafa-firebase.cloudfunctions.net'
+    ? `http://localhost:5001/${config.projectId}/us-central1`
+    : `https://us-central1-${config.projectId}.cloudfunctions.net`
 // stores.AuthStore.handleAuth();
 // console.log(stores.AuthStore.me)
 
@@ -31,8 +41,10 @@ export {
   APIURL,
   firebase,
   auth,
+  database,
+  firestore,
   functions,
-  db,
+  storage,
   // googleAuthProvider,
   // githubAuthProvider,
   // facebookAuthProvider,

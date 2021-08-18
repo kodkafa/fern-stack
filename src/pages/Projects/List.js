@@ -7,7 +7,7 @@ import qs from 'qs'
 
 export const List = inject(
   'AuthStore',
-  'PostStore'
+  'ProjectStore'
 )(
   observer(props => {
     const {t} = useTranslation()
@@ -29,7 +29,7 @@ export const List = inject(
       if (e.key === 'Enter') return navigate('?search=' + query)
     }
 
-    const {list, read} = props.PostStore
+    const {list, read} = props.ProjectStore
     useEffect(() => {
       read({}).then()
     }, [read])
@@ -42,15 +42,15 @@ export const List = inject(
         props.UserStore.read({more: true}).then()
     }
 
-    useEffect(() => {
-      window.addEventListener('scroll', readMore)
-      return () => {
-        window.removeEventListener('scroll', readMore)
-      }
-    })
+    // useEffect(() => {
+    //   window.addEventListener('scroll', readMore)
+    //   return () => {
+    //     window.removeEventListener('scroll', readMore)
+    //   }
+    // })
 
     const filteredList = list.filter(
-      i => i.title.toLowerCase().indexOf(query) > -1
+      i => (i.name || '').toLowerCase().indexOf(query) > -1
     )
     //         || i.username.toLowerCase().indexOf(this.state.query) > -1));
 

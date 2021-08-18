@@ -17,7 +17,21 @@ export class Services {
     }
   }
 
-  static get = async params => {
+  static create = async model => {
+    const token = await this.getToken()
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      mode: 'cors',
+      body: JSON.stringify(model),
+    }
+    const request = new Request(APIURL, options)
+    return await fetch(request)
+  }
+  static read = async params => {
     const id = typeof params === 'string' ? params : null
     const token = await this.getToken()
     //const data = {idToken: token, id};
@@ -42,21 +56,7 @@ export class Services {
     }
     //return response.json();
   }
-  static post = async model => {
-    const token = await this.getToken()
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      mode: 'cors',
-      body: JSON.stringify(model),
-    }
-    const request = new Request(APIURL, options)
-    return await fetch(request)
-  }
-  static put = async (id, model) => {
+  static update = async (id, model) => {
     const headers = new Headers()
     headers.append('Content-Type', 'application/json')
     const options = {
@@ -95,7 +95,6 @@ export class Services {
     )
     return await fetch(request).then(res => res.json())
   }
-
   static toggleAdmin = async (id, model) => {
     const token = await this.getToken()
     console.log('toggleAdmin', {model})

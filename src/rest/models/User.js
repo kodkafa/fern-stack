@@ -25,6 +25,14 @@ export class User {
       : 'fa fa-user'
     this.disabled = data.disabled
 
+    this.createdAt = (data.metadata || {}).creationTime
+    this.lastLogin = (data.metadata || {}).lastSignInTime
+    this.email = data.email
+    this.emailVerified = data.emailVerified
+    this.providers = (data.providerData || []).map(i => i.providerId)
+
+    console.log({data})
+
     makeObservable(this, {
       cover: observable,
       avatar: observable,

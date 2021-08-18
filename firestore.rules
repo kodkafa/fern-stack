@@ -1,72 +1,87 @@
 rules_version = '2';
 service cloud.firestore {
 
-  function isAuthenticated () {
-    return request.auth.uid != null; 
-  }
-
-  function isOwnsResource (userId) {
-    return (request.auth.uid == userId) || (request.auth.uid == resource.data.uid)
-  }
-
-  function isValidUsername(username){
-  	return username.matches('^([a-z0-9_.]){5,22}$');
-	}
-  
-  function isUsernameAvailable(username) {
-    return isValidUsername(username) && resource == null;
-      	//|| get(/databases/$(database)/documents/usernames/$(username)).data.uid == request.auth.uid);
-  }
-  
-  function isOwnsUsername(username) {
-    return resource != null && resource.data.uid == request.auth.uid;
-  }
-
- 	function isAdmin() {
-    return request.auth.token.admin == true;
-  }
-  
- 	function isEditor() {
-    return request.auth.token.admin == true || request.auth.token.editor == true;
-  }
-  
- 	function isManager() {
-    return request.auth.token.admin == true || request.auth.token.editor == true || request.auth.token.manager == true;
-  }
-  
- 	function isWorker() {  
-  	return request.auth.token.admin == true || request.auth.token.editor == true || request.auth.token.manager == true || request.auth.token.worker == true;
-  }
-
-  function doesntModifyUsername () {
-    return request.resource.data.keys().hasAny(['username']) == false;
-  }
-  
-  match /databases/{database}/documents {
-  
-  	match /users/{userId} {
-      //allow read;
-      allow create: if isAuthenticated() && isOwnsResource(userId);
-      allow get: if isAuthenticated() && isOwnsResource(userId);
-      allow update: if isAuthenticated() && (isOwnsResource(userId) || isAdmin())
-      //                  userOwnsResource(user) && doesntModifyUsername(); 
+    function isAuthenticated () {
+        return request.auth.uid != null;
     }
-    
-  	match /users/{document=**} {
-  		allow read: if isAdmin();
-  	}
-    
-    match /usernames/{username} {
-      allow create: if isUsernameAvailable(username) && isAuthenticated();
-      allow update: if isUsernameAvailable(username) && isOwnsUsername(username);
-      allow read: if isAuthenticated();
-      allow list: if isAdmin();
-      allow delete: if isOwnsUsername(username);
+
+    function isOwnsResource (userId) {
+        return (request.auth.uid == userId) || (request.auth.uid == resource.data.uid);
     }
-    
-    match /{document=**} {
-      allow read, write: if false;
-      //allow write: if request.auth.uid != null;
+
+    function isValidUsername(username) {
+        return username.matches('^([a-z0-9_.]){5,22}$');
     }
-  }
+
+    function isUsernameAvailable(username) {
+        return isValidUsername(username) && resource == null;
+        //|| get(/databases/$(database)/documents/usernames/$(username)).data.uid == request.auth.uid);
+    }
+
+    function isOwnsUsername() {
+        return resource != null && resource.data.uid == request.auth.uid;
+    }
+
+    function isAdmin() {
+        return request.auth.token.admin == true;
+    }
+
+    function isEditor() {
+        return request.auth.token.admin == true || request.auth.token.editor == true;
+    }
+
+    function isManager() {
+        return request.auth.token.admin == true || request.auth.token.editor == true || request.auth.token.manager == true;
+    }
+
+    function isWorker() {
+        return request.auth.token.admin == true || request.auth.token.editor == true || request.auth.token.manager == true || request.auth.token.worker == true;
+    }
+
+    function doesntModifyUsername () {
+        return request.resource.data.keys().hasAny(['username']) == false;
+    }
+
+    match /databases/{database}/documents {
+
+        match /users/{userId} {
+            //allow read;
+            allow create: if isAuthenticated() && isOwnsResource(userId);
+            allow get: if isAuthenticated() && isOwnsResource(userId);
+            allow update: if isAuthenticated() && (isOwnsResource(userId) || isAdmin());
+            //                  userOwnsResource(user) && doesntModifyUsername();
+        }
+
+        match /users/{document=**} {
+            allow read: if isAdmin();
+        }
+
+        match /usernames/{username} {
+            allow create: if isUsernameAvailable(username) && isAuthenticated();
+            allow update: if isUsernameAvailable(username) && isOwnsUsername();
+            allow read: if isAuthenticated();
+            allow list: if isAdmin();
+            allow delete: if isOwnsUsername();
+        }
+
+        match /projects/{document=**} {
+            allow read: if isAuthenticated();
+            allow write: if isAdmin();
+        }
+
+        match /pages/{document=**} {
+            allow read: if isAuthenticated();
+            allow write: if isEditor();
+        }
+
+        match /posts/{document=**} {
+            allow read: if isAuthenticated();
+            allow write: if isEditor();
+        }
+
+        match /{document=**} {
+            allow read, write: if false;
+            //allow write: if request.auth.uid != null;
+        }
+    }
 }

@@ -24,7 +24,7 @@ export const SignUp = inject('AuthStore')(
     const onSubmit = async data => {
       setLoading(true)
       if (await props.AuthStore.createUserWithEmailPassword(data)) {
-        navigate(location || '/dashboard')
+        props.AuthStore.signOut().then(() => navigate(location || '/signin'))
       } else setLoading(false)
     }
 
