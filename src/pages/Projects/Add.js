@@ -31,10 +31,6 @@ export const Add = inject(
 
     const {create, info} = props.ProjectStore
 
-    useEffect(() => {
-      info()
-    }, [info])
-
     const onSubmit = async data => {
       // console.log({data})
       // setLoading(true)

@@ -26,10 +26,6 @@ export class _Base {
     })
   }
 
-  base = () => {
-    console.log('base', this.#collection, this)
-  }
-
   get newID() {
     return this.#collection.replace(/s$/, uuid())
   }
@@ -38,10 +34,6 @@ export class _Base {
 
   get list() {
     return [...this._list.values()]
-  }
-
-  set list(item) {
-    return this._list.set(item)
   }
 
   get next() {
@@ -62,7 +54,20 @@ export class _Base {
       .catch(error => this.stores.SystemMessageStore.handleError(error))
   }
 
-  read = async ({q = null, limit = 10, order = 'asc', more = false}) => {
+  read = async ({id, q = null, limit = 10, order = 'asc', more = false}) => {
+    if (id) {
+      if ((this.item = this._list.get(id))) return
+      return await firestore
+        .collection(this.#collection)
+        .doc(id)
+        .get()
+        .then(doc => {
+          this.item = new Model(
+            (doc.exists && {id: doc.id, ...doc.data()}) || {}
+          )
+        })
+        .catch(error => this.stores.SystemMessageStore.handleError(error))
+    }
     // try {
 
     //const urlParams = new URLSearchParams(Object.entries(params))
@@ -134,69 +139,15 @@ export class _Base {
   //   }
   // }
 
-  getItemById = async id => {
-    // this.data = this._list.get(id)
-    // if (this.data) return this.data
-    try {
-      const user = await firestore
-        .collection('users')
-        .doc(id)
-        .get()
-        .then(doc => doc.exists && {id: doc.id, ...doc.data()})
-        .catch(error => this.stores.SystemMessageStore.handleError(error))
-      this._list.set(id, new Model(user))
-      this.status = 'ready'
-    } catch (error) {
-      this.status = 'error'
-      console.error(error)
-    }
-  }
-
-  getItemBySlug = async username => {
-    if (!username) return
-    try {
-      const uid = username.match(/^.{5,22}$/)
-        ? await firestore
-            .collection('usernames')
-            .doc(username)
-            .get()
-            .then(doc => doc.exists && doc.data().uid)
-            .catch(error => this.stores.SystemMessageStore.handleError(error))
-        : username
-      if (!uid) {
-        this.data = false
-        return
-      }
-      const user = await firestore
-        .collection('users')
-        .doc(uid)
-        .get()
-        .then(doc => doc.exists && doc.data())
-        .catch(error => this.stores.SystemMessageStore.handleError(error))
-
-      this.data = new Model({uid, ...user})
-      this.status = 'ready'
-      return this.data
-    } catch (error) {
-      this.status = 'error'
-      console.error(error)
-    }
-  }
-
-  update = async ({id, first, last, born, bio}) => {
-    console.log({id, first, last, born, bio})
-    try {
-      const user = this._list.get(id)
-      user.first = first
-      user.last = last
-      user.born = born
-      user.bio = bio
-      user.save()
-      this.status = 'ready'
-    } catch (error) {
-      this.status = 'error'
-      console.error(error)
-    }
+  update = async ({id, ...data}) => {
+    const item = new Model({id, ...this._list.get(id), ...data})
+    return await firestore
+      .collection(this.#collection)
+      .doc(id)
+      .withConverter(Model)
+      .set(item)
+      .then(() => this._list.set(id, item))
+      .catch(error => this.stores.SystemMessageStore.handleError(error))
   }
 
   delete = async () => {}
@@ -298,4 +249,52 @@ export class _Base {
   //             this._list.set(doc.uid, item)
   //     } else this._list.set(doc.uid, item)
   // }
+  getItemById = async id => {
+    // this.data = this._list.get(id)
+    // if (this.data) return this.data
+    try {
+      const user = await firestore
+        .collection(this.#collection)
+        .doc(id)
+        .get()
+        .then(doc => doc.exists && {id: doc.id, ...doc.data()})
+        .catch(error => this.stores.SystemMessageStore.handleError(error))
+      this._list.set(id, new Model(user))
+      this.status = 'ready'
+    } catch (error) {
+      this.status = 'error'
+      console.error(error)
+    }
+  }
+
+  getItemBySlug = async username => {
+    if (!username) return
+    try {
+      const uid = username.match(/^.{5,22}$/)
+        ? await firestore
+            .collection('usernames')
+            .doc(username)
+            .get()
+            .then(doc => doc.exists && doc.data().uid)
+            .catch(error => this.stores.SystemMessageStore.handleError(error))
+        : username
+      if (!uid) {
+        this.data = false
+        return
+      }
+      const user = await firestore
+        .collection(this.#collection)
+        .doc(uid)
+        .get()
+        .then(doc => doc.exists && doc.data())
+        .catch(error => this.stores.SystemMessageStore.handleError(error))
+
+      this.data = new Model({uid, ...user})
+      this.status = 'ready'
+      return this.data
+    } catch (error) {
+      this.status = 'error'
+      console.error(error)
+    }
+  }
 }

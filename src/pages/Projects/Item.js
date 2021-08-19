@@ -15,16 +15,9 @@ export const Item = inject('AuthStore')(
           </p>
           <p className="text-truncate">{data.content}</p>
           <div className="text-right">
-            {!!data.id && (
-              <Link
-                to={'/' + (data.username || id)}
-                className="btn btn-sm btn-primary">
-                READ
-              </Link>
-            )}
             {(isAdmin || isEditor) && (
               <Link
-                to={'/users/' + id + '/edit'}
+                to={'/projects/' + id + '/edit'}
                 className="btn btn-sm btn-success ms-1">
                 EDIT
               </Link>
