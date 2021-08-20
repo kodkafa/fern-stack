@@ -41,16 +41,14 @@ export class _Base {
   }
 
   create = async ({data}) => {
-    data.id = this.newID
+    const id = this.newID
+    const item = new Model({id, ...data})
     return await firestore
       .collection(this.#collection)
-      .doc(data.id)
+      .doc(id)
       .withConverter(Model)
-      .set(new Model(data))
-      .then(() => {
-        console.log('Document successfully written!')
-        return true
-      })
+      .set(item)
+      .then(() => this._list.set(id, item))
       .catch(error => this.stores.SystemMessageStore.handleError(error))
   }
 

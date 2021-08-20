@@ -31,12 +31,7 @@ export const Add = inject(
 
     const {create, info} = props.ProjectStore
 
-    const onSubmit = async data => {
-      // console.log({data})
-      // setLoading(true)
-      await create({data})
-      // setLoading(false)
-    }
+    const onSubmit = async data => await create(data)
 
     return (
       <SlideOver title="Add New" className="w-50">
@@ -47,9 +42,7 @@ export const Add = inject(
           </div>
           <DateInput label={t('Created At')} name="createdAt" />
           <Textarea label={t('Description')} name="description" />
-          <Submit loading={loading} className="mt-2">
-            {t('Create')}
-          </Submit>
+          <Submit className="mt-2">{t('Create')}</Submit>
         </Form>
       </SlideOver>
     )

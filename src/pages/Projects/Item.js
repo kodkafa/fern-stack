@@ -11,7 +11,8 @@ export const Item = inject('AuthStore')(
         <div className="card-body">
           <h3 className="h5 card-title text-truncate">{data.name}</h3>
           <p className="text-truncate">
-            <small>{data.createdAt}</small> - <small>{data.updatedAt}</small>
+            <small>{String(data.createdAt)}</small> -{' '}
+            <small>{String(data.updatedAt)}</small>
           </p>
           <p className="text-truncate">{data.content}</p>
           <div className="text-right">
