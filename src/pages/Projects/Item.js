@@ -1,11 +1,18 @@
 import {inject, observer} from 'mobx-react'
 import React from 'react'
 import {Link} from 'react-router-dom'
+import {Button} from 'components'
 
-export const Item = inject('AuthStore')(
+export const Item = inject(
+  'AuthStore',
+  'ProjectStore'
+)(
   observer(props => {
     const {id, data} = props
     const {isAdmin, isEditor} = props.AuthStore.me
+
+    const handleDelete = async () => await props.ProjectStore.delete(id)
+
     return (
       <div id={id} className="card">
         <div className="card-body">
@@ -22,6 +29,14 @@ export const Item = inject('AuthStore')(
                 className="btn btn-sm btn-success ms-1">
                 EDIT
               </Link>
+            )}
+            {(isAdmin || isEditor) && (
+              <Button
+                className="btn btn-sm btn-alert ms-1"
+                confirm="Are you sure?"
+                onClick={handleDelete}>
+                DELETE
+              </Button>
             )}
           </div>
         </div>

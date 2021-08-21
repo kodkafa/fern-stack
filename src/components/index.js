@@ -12,6 +12,8 @@ export {CustomPagination as Pagination} from './Pagination'
 export {SystemMessages} from './SystemMessages'
 
 export {DatePicker} from './DatePicker'
+export {Button} from './Button'
+export {Dialog} from './Dialog'
 export {Modal} from './Modal'
 export {SlideOver} from './SlideOver'
 export {CoverEditor} from './CoverEditor'

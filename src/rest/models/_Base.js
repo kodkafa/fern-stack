@@ -38,7 +38,7 @@ export class _Base {
       //(k, v) => v !== null ? v : undefined
     )
   static toFirestore = item => ({
-    ...JSON.parse(item.toString()),
+    ...JSON.parse(JSON.stringify(item)),
     createdAt: firebase.firestore.Timestamp.fromDate(item.createdAt),
     updatedAt: firebase.firestore.Timestamp.fromDate(item.updatedAt),
   })

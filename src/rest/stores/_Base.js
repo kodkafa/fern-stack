@@ -40,7 +40,7 @@ export class _Base {
     return (this.list[this.list.length - 1] || {}).id
   }
 
-  create = async ({data}) => {
+  create = async data => {
     const id = this.newID
     const item = new Model({id, ...data})
     return await firestore
@@ -148,7 +148,14 @@ export class _Base {
       .catch(error => this.stores.SystemMessageStore.handleError(error))
   }
 
-  delete = async () => {}
+  delete = async id => {
+    return await firestore
+      .collection(this.#collection)
+      .doc(id)
+      .delete()
+      .then(() => this._list.delete(id))
+      .catch(error => this.stores.SystemMessageStore.handleError(error))
+  }
 
   // toggleClaimById = async ({id, position}) => {
   //     console.log({id, position})
