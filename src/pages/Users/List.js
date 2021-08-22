@@ -30,11 +30,15 @@ export const List = inject(
 
     const handleGetMore = e => {
       e.preventDefault()
-      props.UserStore.read({more: true}).then()
+      props.UserStore.read({more: true}).then(() => {
+        setLoading(false)
+      })
     }
 
     useEffect(() => {
-      props.UserStore.read({q: query}).then()
+      props.UserStore.read({q: query}).then(() => {
+        setLoading(false)
+      })
     }, [props.UserStore, query])
     const {list} = props.UserStore
     console.log(list.map(i => i.first))

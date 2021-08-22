@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Dialog} from './Dialog'
 
 export const Button = ({
@@ -15,31 +15,39 @@ export const Button = ({
   type = 'button',
   ...props
 }) => {
-  const [open, setOpen] = useState(false)
+  const [show, setShow] = useState(false)
   const [loading, setLoading] = useState(_loading)
   //const {dispatch = _ => null} = useContext(ContextStore)
 
   const handleConfirm = e => {
     e.preventDefault()
     e.stopPropagation()
-    setOpen(true)
+    setShow(true)
     // dispatch(true)
   }
-
-  const handleClose = () => open && setOpen(false)
+  //
+  // const handleClose = () => open && setOpen(false)
 
   const handleClick = async e => {
     setLoading(true)
-    const r = onClick
+    onClick
       ? await onClick(e)
       : await (async e =>
           props.type === 'submit'
             ? e.target.closest('form').dispatchEvent(new Event('submit'))
             : true)(e)
-    setLoading(false)
-    handleClose()
+    //setShow(false)
+    //setLoading(false)
+    // handleClose()
     // if (onComplete) onComplete(r)
   }
+
+  useEffect(() => {
+    return () => {
+      setLoading(false)
+      setShow(false)
+    }
+  }, [])
 
   const textPaddingClass = (label || children) && 'pr-2'
 
@@ -56,8 +64,11 @@ export const Button = ({
         </span>
         {label || children}
       </button>
-      {confirm && (
-        <Dialog show={open} onConfirm={handleClick} onClose={handleClose}>
+      {confirm && show && (
+        <Dialog
+          show={show}
+          onConfirm={handleClick}
+          onClose={() => setShow(false)}>
           {confirm}
         </Dialog>
       )}

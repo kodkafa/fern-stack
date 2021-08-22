@@ -1,5 +1,5 @@
 import {firebase, auth, database, firestore} from 'rest/firebase/initialize'
-import {action, makeObservable, observable} from 'mobx'
+import {action, makeObservable, observable, runInAction} from 'mobx'
 import {Account as Model} from 'rest/models'
 import moment from 'moment'
 
@@ -18,7 +18,7 @@ export class AuthStore {
       handleAuth: action,
       reAuth: action,
       signOut: action,
-      getUserData: action,
+      // getUserData: action,
     })
   }
 
@@ -37,12 +37,13 @@ export class AuthStore {
       .getIdTokenResult()
       .then(result => result.claims)
       .catch(error => this.stores.SystemMessageStore.handleError(error))
-
-    this.authenticated = true
-    console.log({'this.authenticated': this.authenticated})
-    //const auth = new AuthModel({...user, customClaims: result.claims});
-    this.me = new Model({uid: data.uid, ...user, customClaims})
-    // console.log('me', customClaims);
+    runInAction(() => {
+      this.authenticated = true
+      console.log({'this.authenticated': this.authenticated})
+      //const auth = new AuthModel({...user, customClaims: result.claims});
+      this.me = new Model({uid: data.uid, ...user, customClaims})
+      // console.log('me', customClaims);
+    })
   }
 
   createUserWithEmailPassword = async ({
@@ -95,7 +96,7 @@ export class AuthStore {
       .set({
         uid: user.uid,
       })
-      .catch(error =>
+      .catch(() =>
         this.stores.SystemMessageStore.handleError({
           code: 'CLAIMED_USERNAME',
           message:
@@ -151,7 +152,7 @@ export class AuthStore {
       if (callback) metadataRef.off('value', callback)
       if (user) {
         metadataRef = database.ref('metadata/' + user.uid + '/refreshTime')
-        callback = snapshot => user.getIdToken(true)
+        callback = () => user.getIdToken(true)
         metadataRef.on('value', callback)
         return this.getUserData(user)
       } //else this.authenticated = false;

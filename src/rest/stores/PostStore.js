@@ -1,5 +1,5 @@
 import {firestore} from 'rest/firebase/initialize'
-import {action, computed, makeObservable, observable, runInAction} from 'mobx'
+import {action, computed, makeObservable, observable} from 'mobx'
 import {Post as Model} from 'rest/models'
 import uuid from 'react-uuid'
 

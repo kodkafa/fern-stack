@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react'
-import {FormProvider, useForm, useFormContext} from 'react-hook-form'
+import {FormProvider, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 
 export function Form({
@@ -8,7 +8,7 @@ export function Form({
   children,
   schema,
   onSubmit = data => console.log('onSubmit', data),
-  onChange,
+  // onChange,
 }) {
   const methods = useForm({
     resolver: yupResolver(schema),

@@ -1,6 +1,4 @@
-import {firebase} from 'rest/firebase/initialize'
-import {computed, makeObservable, observable} from 'mobx'
-import {stores} from 'rest/stores'
+import {makeObservable} from 'mobx'
 import {_Item} from './_Item'
 
 export class Post extends _Item {

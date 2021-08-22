@@ -1,51 +1,72 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useCallback, useEffect, useRef, useState} from 'react'
 import ReactDOM from 'react-dom'
 import {Button} from './Button'
 import {Modal} from 'bootstrap'
+import {useTranslation} from 'react-i18next'
 
 export const Dialog = ({
-  // title = 'Dialog',
-  show,
-  children,
-  onClose = null,
-  onConfirm = () => null,
   className = '',
-  // scrollable = false
+  title,
+  children,
+  cancelButtonText,
+  confirmButtontext,
+  show = true,
+  onClose = () => null,
+  onConfirm = () => null,
 }) => {
+  const {t} = useTranslation()
   const ref = useRef(null)
   const [element, setElement] = useState({show: () => null, hide: () => null})
 
   useEffect(() => {
     setElement(
       new Modal(ref.current, {
-        keyboard: true,
+        //keyboard: true,
         scroll: true,
-        backdrop: false,
+        backdrop: true,
       })
     )
   }, [ref])
+  // element.show()
+  console.log({show})
   if (show) element.show()
   else element.hide()
 
-  const handleClose = () => {
-    if (onClose) onClose()
+  const handleConfirm = useCallback(async () => {
+    await onConfirm()
+    element.hide()
+    console.log('handleConfirm')
+  }, [element, onConfirm])
+
+  const handleClose = useCallback(async () => {
+    await onClose()
     element.hide()
     console.log('handleClose')
-  }
+  }, [element, onClose])
 
-  const escClose = e => {
-    if (e.key === 'Escape') {
-      handleClose()
-      document.body.removeEventListener('keyup', escClose, false)
-    }
-  }
+  const handleKeyboard = useCallback(
+    async e => {
+      console.log(e.key)
+      if (e.key === 'Escape') {
+        document.body.removeEventListener('keyup', handleKeyboard, false)
+        await handleClose()
+      }
+      if (e.key === 'Enter' || e.key === ' ') {
+        document.body.removeEventListener('keyup', handleKeyboard, false)
+        await handleConfirm()
+      }
+    },
+    [handleClose, handleConfirm]
+  )
 
   useEffect(() => {
-    document.body.addEventListener('keyup', escClose)
+    document.body.addEventListener('keyup', handleKeyboard)
     return () => {
-      document.body.removeEventListener('keyup', escClose, false)
+      console.log('handleCleanup')
+      element.hide()
+      document.body.removeEventListener('keyup', handleKeyboard, false)
     }
-  })
+  }, [element, handleKeyboard])
 
   return (
     <div
@@ -53,14 +74,14 @@ export const Dialog = ({
       tabIndex="-1"
       ref={ref}
       aria-hidden="true">
-      <div className="modal-dialog">
+      <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Confirmation</h5>
+            <h5 className="modal-title">{title || t('Confirmation')}</h5>
             <button
               type="button"
               className="btn-close"
-              data-bs-dismiss="modal"
+              onClick={handleClose}
               aria-label="Close"
             />
           </div>
@@ -68,12 +89,12 @@ export const Dialog = ({
           <div className="modal-footer">
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-light"
               data-bs-dismiss="modal">
-              Close
+              {cancelButtonText || t('Cancel')}
             </button>
             <Button className="btn btn-primary" onClick={onConfirm}>
-              Confirm
+              {confirmButtontext || t('Confirmation')}
             </Button>
           </div>
         </div>

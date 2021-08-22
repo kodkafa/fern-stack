@@ -1,9 +1,8 @@
 import {inject, observer} from 'mobx-react'
 import React, {useEffect, useState} from 'react'
 import {useTranslation} from 'react-i18next'
-import {useLocation, useNavigate} from 'react-router-dom'
+import {useLocation} from 'react-router-dom'
 import {Item} from './Item'
-import qs from 'qs'
 
 export const List = inject(
   'AuthStore',
@@ -11,10 +10,10 @@ export const List = inject(
 )(
   observer(props => {
     const {t} = useTranslation()
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
     // const {page=1} = useParams()
-    const {page = 1, search} = useLocation()
-    const params = {...qs.parse(search, {ignoreQueryPrefix: true})}
+    const {search} = useLocation()
+    // const params = {...qs.parse(search, {ignoreQueryPrefix: true})}
     const [loading, setLoading] = useState(false)
     const [query, setQuery] = useState(search)
 
@@ -23,15 +22,17 @@ export const List = inject(
       setQuery(e.currentTarget.value.toLowerCase())
     }
 
-    const handleSearch = e => {
-      e.preventDefault()
-      console.log(e.key)
-      if (e.key === 'Enter') return navigate('?search=' + query)
-    }
+    // const handleSearch = e => {
+    //   e.preventDefault()
+    //   console.log(e.key)
+    //   if (e.key === 'Enter') return navigate('?search=' + query)
+    // }
 
     const {list, read} = props.PostStore
     useEffect(() => {
-      read({}).then()
+      read({}).then(() => {
+        setLoading(false)
+      })
     }, [read])
 
     const readMore = () => {
@@ -39,7 +40,9 @@ export const List = inject(
         window.innerHeight + document.documentElement.scrollTop ===
         document.scrollingElement.scrollHeight
       )
-        props.UserStore.read({more: true}).then()
+        read({more: true}).then(() => {
+          setLoading(false)
+        })
     }
 
     useEffect(() => {

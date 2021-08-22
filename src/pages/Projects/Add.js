@@ -1,5 +1,5 @@
 import {inject, observer} from 'mobx-react'
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import {useTranslation} from 'react-i18next'
 import {DateInput, Form, Input, Submit, Textarea} from 'components/form'
 import * as Yup from 'yup'
@@ -27,9 +27,9 @@ export const Add = inject(
       //     .min(10, 'Short bio  more than 10 characters or longer')
       //     .max(200, 'Short bio must be under 200 characters or shorter'),
     })
-    const [loading, setLoading] = useState(false)
+    // const [loading, setLoading] = useState(false)
 
-    const {create, info} = props.ProjectStore
+    const {create} = props.ProjectStore
 
     const onSubmit = async data => await create(data)
 

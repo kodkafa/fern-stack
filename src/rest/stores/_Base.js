@@ -1,5 +1,5 @@
 import {firestore} from 'rest/firebase/initialize'
-import {action, computed, makeObservable, observable} from 'mobx'
+import {action, computed, makeObservable, observable, runInAction} from 'mobx'
 import {Project as Model} from 'rest/models'
 import uuid from 'react-uuid'
 
@@ -18,16 +18,16 @@ export class _Base {
       searchQuery: observable,
       list: computed,
       next: computed,
-      create: action,
-      read: action,
-      update: action,
+      // create: action,
+      //read: action,
+      // update: action,
       delete: action,
       getItemById: action,
     })
   }
 
   get newID() {
-    return this.#collection.replace(/s$/, uuid())
+    return this.#collection.replace(/s$/, '-' + uuid())
   }
 
   _list = new observable.map()
@@ -48,21 +48,32 @@ export class _Base {
       .doc(id)
       .withConverter(Model)
       .set(item)
-      .then(() => this._list.set(id, item))
+      .then(
+        runInAction(() => {
+          this._list.set(id, item)
+        })
+      )
       .catch(error => this.stores.SystemMessageStore.handleError(error))
   }
 
   read = async ({id, q = null, limit = 10, order = 'asc', more = false}) => {
     if (id) {
-      if ((this.item = this._list.get(id))) return
+      if (this._list.get(id)) {
+        runInAction(() => {
+          this.item = this._list.get(id)
+        })
+        return
+      }
       return await firestore
         .collection(this.#collection)
         .doc(id)
         .get()
         .then(doc => {
-          this.item = new Model(
-            (doc.exists && {id: doc.id, ...doc.data()}) || {}
-          )
+          runInAction(() => {
+            this.item = new Model(
+              (doc.exists && {id: doc.id, ...doc.data()}) || {}
+            )
+          })
         })
         .catch(error => this.stores.SystemMessageStore.handleError(error))
     }
@@ -99,7 +110,9 @@ export class _Base {
 
     snapshot.forEach(doc => {
       console.log(doc.id)
-      this._list.set(doc.id, new Model({id: doc.id, ...doc.data()}))
+      runInAction(() => {
+        this._list.set(doc.id, new Model({id: doc.id, ...doc.data()}))
+      })
     })
     this.cursor = snapshot.docs[snapshot.docs.length - 1]
     // console.log('last', lastVisible)
@@ -144,7 +157,11 @@ export class _Base {
       .doc(id)
       .withConverter(Model)
       .set(item)
-      .then(() => this._list.set(id, item))
+      .then(
+        runInAction(() => {
+          this._list.set(id, item)
+        })
+      )
       .catch(error => this.stores.SystemMessageStore.handleError(error))
   }
 
@@ -153,7 +170,11 @@ export class _Base {
       .collection(this.#collection)
       .doc(id)
       .delete()
-      .then(() => this._list.delete(id))
+      .then(
+        runInAction(() => {
+          this._list.delete(id)
+        })
+      )
       .catch(error => this.stores.SystemMessageStore.handleError(error))
   }
 
