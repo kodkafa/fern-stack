@@ -85,23 +85,27 @@ export class _Base {
     // this.data = data
     // console.log('function call users', this.data)
 
-    let ref = firestore
-      .collection(this.#collection)
-      // .orderBy('username', order)
-      .orderBy('createdAt', order)
+    let ref = firestore.collection(this.#collection)
+    // .orderBy('username', order)
+    //
     //.orderBy('last', order)
 
     // search
     //if (q)
     // ref = ref.where('username', '>=', q).where('username', '<=', q + '\uf8ff')
-    if (q) ref.where('title', '>=', q).where('title', '<=', q + '\uf8ff')
+    if (q)
+      ref = ref
+        .where('name', '>=', q)
+        .where('name', '<=', q + '\uf8ff')
+        .orderBy('name', order) //
     //pagination (cursor query)
+
     if (more && this.cursor) {
       console.log({more, cursor: this.cursor})
 
       ref = ref.startAfter(this.cursor)
     }
-    ref = ref.limit(limit)
+    ref = ref.orderBy('createdAt', order).limit(limit)
     const snapshot = await ref.get() //.where('capital', '==', true).get();
     if (snapshot.empty) {
       console.log('No matching documents.')
@@ -109,7 +113,6 @@ export class _Base {
     }
 
     snapshot.forEach(doc => {
-      console.log(doc.id)
       runInAction(() => {
         this._list.set(doc.id, new Model({id: doc.id, ...doc.data()}))
       })

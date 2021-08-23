@@ -1,8 +1,9 @@
 import {inject, observer} from 'mobx-react'
 import React, {useEffect, useState} from 'react'
 import {useTranslation} from 'react-i18next'
-import {useLocation} from 'react-router-dom'
+import {useNavigate, useLocation} from 'react-router-dom'
 import {Item} from './Item'
+import qs from 'qs'
 
 export const List = inject(
   'AuthStore',
@@ -10,30 +11,22 @@ export const List = inject(
 )(
   observer(props => {
     const {t} = useTranslation()
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
     // const {page=1} = useParams()
     const {search} = useLocation()
-    // const params = {...qs.parse(search, {ignoreQueryPrefix: true})}
+    const {search: q} = {...qs.parse(search, {ignoreQueryPrefix: true})}
     const [loading, setLoading] = useState(false)
-    const [query, setQuery] = useState(search)
+    const [query, setQuery] = useState(q)
 
-    const handleFilter = e => {
-      e.preventDefault()
-      setQuery(e.currentTarget.value.toLowerCase())
-    }
-
-    // const handleSearch = e => {
-    //   e.preventDefault()
-    //   console.log(e.key)
-    //   if (e.key === 'Enter') return navigate('?search=' + query)
-    // }
+    const handleFilter = e => setQuery(e.currentTarget.value.toLowerCase())
+    const handleSearch = e => e.key === 'Enter' && navigate('?search=' + query)
 
     const {list, read} = props.ProjectStore
     useEffect(() => {
-      read({}).then(() => {
+      read({q}).then(() => {
         setLoading(false)
       })
-    }, [read])
+    }, [read, q])
 
     // const readMore = () => {
     //   if (
@@ -50,6 +43,7 @@ export const List = inject(
     //   }
     // })
 
+    console.log({list})
     const filteredList = list.filter(
       i => (i.name || '').toLowerCase().indexOf(query) > -1
     )
@@ -67,6 +61,7 @@ export const List = inject(
               placeholder="Filter ..."
               value={query}
               onChange={handleFilter}
+              onKeyUp={handleSearch}
             />
             {/*<small className="text-muted">Total result: {0}</small>*/}
           </div>

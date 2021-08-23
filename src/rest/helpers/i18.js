@@ -1,6 +1,6 @@
 import i18next from 'i18next'
-import EN from '../../locales/en.json'
-import TR from '../../locales/tr.json'
+import EN from '../../translations/en.json'
+import TR from '../../translations/tr.json'
 
 i18next.init({
   interpolation: {escapeValue: false}, // React already does escaping

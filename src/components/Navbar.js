@@ -26,7 +26,7 @@ const Shrink = (e, shrink) => {
 
 export const Navbar = inject('AuthStore')(
   observer(props => {
-    const {i18n} = useTranslation()
+    const {i18n, t} = useTranslation()
     const {language} = i18n
 
     const {authenticated, me = {}} = props.AuthStore
@@ -58,35 +58,35 @@ export const Navbar = inject('AuthStore')(
             {me.isUser && (
               <li className="nav-item">
                 <Link className="nav-link" to="/features">
-                  Features
+                  {t('Features')}
                 </Link>
               </li>
             )}
             {me.isWorker && (
               <li className="nav-item">
                 <Link className="nav-link" to="/works">
-                  Works
+                  {t('Works')}
                 </Link>
               </li>
             )}
             {(me.isManager || me.isAdmin) && (
               <li className="nav-item">
                 <Link className="nav-link" to="/users">
-                  Users
+                  {t('Users')}
                 </Link>
               </li>
             )}
             {me.isAdmin && (
               <li className="nav-item">
                 <Link className="nav-link" to="/projects">
-                  Projects
+                  {t('Projects')}
                 </Link>
               </li>
             )}
             {(me.isEditor || me.isManager || me.isAdmin) && (
               <li className="nav-item">
                 <Link className="nav-link" to="/posts">
-                  Posts
+                  {t('Posts')}
                 </Link>
               </li>
             )}
@@ -96,12 +96,12 @@ export const Navbar = inject('AuthStore')(
         return [
           <li className="nav-item" key="about">
             <HashLink smooth className="nav-link" to="/#about">
-              About
+              {t('About')}
             </HashLink>
           </li>,
           <li className="nav-item" key="features">
             <Link className="nav-link" to="/features">
-              Features
+              {t('Features')}
             </Link>
           </li>,
         ]
@@ -129,17 +129,17 @@ export const Navbar = inject('AuthStore')(
               className="dropdown-menu  dropdown-menu-right"
               aria-labelledby="userMenu">
               <Link className="dropdown-item" to="/dashboard">
-                Dashboard
+                {t('Dashboard')}
               </Link>
               <Link className="dropdown-item" to="/profile">
-                Profile
+                {t('Profile')}
               </Link>
               <Link className="dropdown-item" to="/settings">
-                Settings
+                {t('Settings')}
               </Link>
               <div className="dropdown-divider" />
               <Link className="dropdown-item" to="/signout">
-                Log out
+                {t('Log out')}
               </Link>
             </div>
           </li>,
@@ -148,12 +148,12 @@ export const Navbar = inject('AuthStore')(
         return [
           <li className="nav-item" key="signin">
             <NavLink className="nav-link" to="/signin">
-              Sign In
+              {t('Sign In')}
             </NavLink>
           </li>,
           <li className="nav-item" key="signup">
             <NavLink className="nav-link" to="/signup">
-              Sign Up
+              {t('Sign Up')}
             </NavLink>
           </li>,
         ]
