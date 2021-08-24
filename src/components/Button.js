@@ -11,7 +11,11 @@ export const Button = ({
   label = '',
   children,
   icon,
-  loaderIcon = <i className="icon-spinner block animate-spin " />,
+  loaderIcon = (
+    <div className="spinner-border spinner-border-sm text-light" role="status">
+      <span className="sr-only">Loading...</span>
+    </div>
+  ),
   type = 'button',
   ...props
 }) => {
@@ -37,7 +41,7 @@ export const Button = ({
             ? e.target.closest('form').dispatchEvent(new Event('submit'))
             : true)(e)
     //setShow(false)
-    //setLoading(false)
+    setLoading(false)
     // handleClose()
     // if (onComplete) onComplete(r)
   }
@@ -49,7 +53,8 @@ export const Button = ({
     }
   }, [])
 
-  const textPaddingClass = (label || children) && 'pr-2'
+  const textPaddingClass =
+    (_loading || loading || icon) && (label || children) && 'pe-2'
 
   return (
     <React.Fragment>

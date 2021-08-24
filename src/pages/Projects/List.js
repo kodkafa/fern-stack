@@ -4,6 +4,7 @@ import {useTranslation} from 'react-i18next'
 import {useNavigate, useLocation} from 'react-router-dom'
 import {Item} from './Item'
 import qs from 'qs'
+import {Button} from '../../components'
 
 export const List = inject(
   'AuthStore',
@@ -28,13 +29,15 @@ export const List = inject(
       })
     }, [read, q])
 
-    // const readMore = () => {
-    //   if (
-    //     window.innerHeight + document.documentElement.scrollTop ===
-    //     document.scrollingElement.scrollHeight
-    //   )
-    //     read({more: true}).then(()=>{setLoading(false)})
-    // }
+    const handleGetMore = async () => {
+      // if (
+      //   window.innerHeight + document.documentElement.scrollTop ===
+      //   document.scrollingElement.scrollHeight
+      // )
+      await read({more: true}).then(() => {
+        setLoading(false)
+      })
+    }
 
     // useEffect(() => {
     //   window.addEventListener('scroll', readMore)
@@ -43,26 +46,27 @@ export const List = inject(
     //   }
     // })
 
-    console.log({list})
+    console.log({list, query})
     const filteredList = list.filter(
-      i => (i.name || '').toLowerCase().indexOf(query) > -1
+      i => !query || (i.name || '').toLowerCase().indexOf(query) > -1
     )
-    //         || i.username.toLowerCase().indexOf(this.state.query) > -1));
 
     return loading ? (
       <div>{t('Loading...')}</div>
     ) : (
       <React.Fragment>
         <div className="list">
-          <div className="searchInput text-right pr-4">
-            <input
-              type="text"
-              className="form-control-sm"
-              placeholder="Filter ..."
-              value={query}
-              onChange={handleFilter}
-              onKeyUp={handleSearch}
-            />
+          <div className="row pb-2">
+            <div className="col-3 gx-3">
+              <input
+                type="text"
+                className="form-control form-control-sm"
+                placeholder="filter & search ..."
+                value={query}
+                onChange={handleFilter}
+                onKeyUp={handleSearch}
+              />
+            </div>
             {/*<small className="text-muted">Total result: {0}</small>*/}
           </div>
           <div className="row g-2">
@@ -70,6 +74,9 @@ export const List = inject(
               <Item key={i.id} id={i.id} data={i} />
             ))}
           </div>
+          <Button className="btn btn-primary" onClick={handleGetMore}>
+            Get More
+          </Button>
           {/*{this.props.count &&*/}
           {/*<Pagination page={this.state.page} count={this.props.count}*/}
           {/*            limit={this.state.limit} range={this.state.range}*/}

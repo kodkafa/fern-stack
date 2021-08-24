@@ -77,35 +77,20 @@ export class _Base {
         })
         .catch(error => this.stores.SystemMessageStore.handleError(error))
     }
-    // try {
-
-    //const urlParams = new URLSearchParams(Object.entries(params))
-
-    // const data = await firebase.functions().httpsCallable('users/', {method:"GET"})({params: {nextPageToken: null}})
-    // this.data = data
-    // console.log('function call users', this.data)
 
     let ref = firestore.collection(this.#collection)
-    // .orderBy('username', order)
-    //
-    //.orderBy('last', order)
-
-    // search
-    //if (q)
-    // ref = ref.where('username', '>=', q).where('username', '<=', q + '\uf8ff')
     if (q)
       ref = ref
         .where('name', '>=', q)
         .where('name', '<=', q + '\uf8ff')
-        .orderBy('name', order) //
-    //pagination (cursor query)
+        .orderBy('name', order)
 
+    ref = ref.orderBy('createdAt', order)
     if (more && this.cursor) {
       console.log({more, cursor: this.cursor})
-
       ref = ref.startAfter(this.cursor)
     }
-    ref = ref.orderBy('createdAt', order).limit(limit)
+    ref = ref.limit(limit)
     const snapshot = await ref.get() //.where('capital', '==', true).get();
     if (snapshot.empty) {
       console.log('No matching documents.')
@@ -118,40 +103,13 @@ export class _Base {
       })
     })
     this.cursor = snapshot.docs[snapshot.docs.length - 1]
-    // console.log('last', lastVisible)
-
-    // console.log('read')
-    // this.data = await Services.get(urlParams)
-    // console.log({data:this.data})
-    // this.data.map(item => new Model(item))
-    // this.status = 'ready'
-    // } catch (error) {
-    //   this.status = 'error'
-    //   console.error(error)
-    // }
+    return true
+    // new Promise(resolve => {
+    //   setTimeout(() => {
+    //     resolve(true);
+    //   }, 2000);
+    // });
   }
-
-  // getUsers = async () => {
-  //   try {
-  //     const params = {
-  //       // pageNumber: this.pageNumber,
-  //       searchQuery: this.searchQuery,
-  //       //isAscending: this.isAscending
-  //       nextPageToken: null,
-  //     }
-  //     const urlParams = new URLSearchParams(Object.entries(params))
-  //
-  //     // const data = await firebase.functions().httpsCallable('users/', {method:"GET"})({params: {nextPageToken: null}})
-  //     // this.data = data
-  //     // console.log('function call users', this.data)
-  //     this.data = await Services.get(urlParams)
-  //     this.data.map(item => new Model(item))
-  //     this.status = 'ready'
-  //   } catch (error) {
-  //     this.status = 'error'
-  //     console.error(error)
-  //   }
-  // }
 
   update = async ({id, ...data}) => {
     const item = new Model({id, ...this._list.get(id), ...data})
