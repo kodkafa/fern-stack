@@ -1,9 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {Offcanvas} from 'bootstrap'
+import {useNavigate} from 'react-router-dom'
 
 export function SlideOver({title = '', children, show = true, className = ''}) {
   const ref = useRef(null)
-  const [element, setElement] = useState({show: () => null, hide: () => null})
+  const navigate = useNavigate()
+  const [element, setElement] = useState({
+    show: () => null,
+    hide: () => null,
+  })
 
   useEffect(() => {
     setElement(
@@ -13,7 +18,11 @@ export function SlideOver({title = '', children, show = true, className = ''}) {
         backdrop: false,
       })
     )
-  }, [ref])
+    ref.current.addEventListener('hidden.bs.offcanvas', () => {
+      navigate('..')
+    })
+  }, [ref, navigate])
+
   if (show) element.show()
   else element.hide()
 
@@ -21,7 +30,6 @@ export function SlideOver({title = '', children, show = true, className = ''}) {
     <div
       className={`offcanvas offcanvas-end shadow ${className}`}
       style={{paddingTop: 62}}
-      id="offcanvas"
       tabIndex="-1"
       ref={ref}
       aria-labelledby="offcanvasLabel">

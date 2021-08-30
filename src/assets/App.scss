@@ -11,6 +11,21 @@
 @import 'main';
 @import 'forms';
 
+.text-colorize-gray {
+  h1,
+  h2 {
+    color: $gray-900;
+  }
+  h3,
+  h4,
+  h5 {
+    color: $gray-900;
+  }
+  p {
+    color: $gray-700;
+  }
+}
+
 @import '../pages/Welcome/Welcome';
 @import '../pages/Features/Features';
 @import '../pages/Users/Users';
